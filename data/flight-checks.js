@@ -19,7 +19,7 @@ window.FLIGHT_TRACKER_DATA = {
     "checkIntervalHours": 6,
     "currency": "RUB",
     "timezone": "Europe/Moscow",
-    "maxTravelHours": 20,
+    "maxTravelHours": 70,
     "maxInternationalStops": 1
   },
   "catalog": [],

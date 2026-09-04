@@ -309,12 +309,15 @@ main { padding-block: 24px 12px; }
 .control-group > span, .control-group legend { display: block; margin-bottom: 7px; color: var(--text-soft); font-size: 12px; font-weight: 700; }
 
 .airport-selector { margin-top: 20px; padding: 18px 22px; }
+.airport-selector__controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); gap: 22px; align-items: end; }
 .airport-selector legend { font-size: 1rem; color: var(--text); }
 .airport-option { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: var(--surface); font-size: 14px; }
 .airport-option:has(input:checked) { background: var(--primary-soft); border-color: var(--primary); }
 .airport-option:focus-within { outline: 2px solid var(--primary); outline-offset: 3px; }
 .airport-option input { width: 20px; height: 20px; accent-color: var(--primary); }
 .airport-option b { color: var(--text-soft); margin-left: 5px; font-size: 12px; }
+.duration-control > span { font-size: 1rem; color: var(--text); }
+.duration-control small { display: block; margin-top: 5px; color: var(--text-soft); font-size: 12px; }
 .scope-note { color: var(--text-soft); font-size: 14px; line-height: 1.5; margin-top: 10px; }
 .offer-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 12px; margin-top: 8px; border: 1px solid var(--primary); border-radius: 9px; color: var(--primary-ink); background: var(--primary-soft); font-size: 14px; font-weight: 700; text-decoration: none; }
 .offer-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
@@ -330,6 +333,7 @@ main { padding-block: 24px 12px; }
 .discovery-event p { color: var(--text-soft); font-size: 14px; margin-top: 6px; }
 @media (max-width: 800px) {
   .airport-selector, .discovery-panel { padding: 16px; }
+  .airport-selector__controls { grid-template-columns: 1fr; gap: 16px; }
   .airport-selector .chip-list { display: grid; grid-template-columns: 1fr; }
   .airport-option { width: 100%; }
   .discovery-counts { grid-template-columns: 1fr; }

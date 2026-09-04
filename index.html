@@ -67,11 +67,24 @@
   </header>
 
   <main class="shell" id="content">
-    <section class="airport-selector panel" aria-label="Выбор аэропортов для всего отчёта">
-      <fieldset class="control-group">
-        <legend>Откуда летим</legend>
-        <div class="chip-list" id="airport-filter"></div>
-      </fieldset>
+    <section class="airport-selector panel" aria-label="Основные фильтры для всего отчёта">
+      <div class="airport-selector__controls">
+        <fieldset class="control-group">
+          <legend>Откуда летим</legend>
+          <div class="chip-list" id="airport-filter"></div>
+        </fieldset>
+        <label class="control-group duration-control">
+          <span>Длительность перелёта</span>
+          <select id="duration-filter" aria-describedby="duration-help">
+            <option value="12">До 12 часов</option>
+            <option value="24">До 24 часов</option>
+            <option value="36">До 36 часов</option>
+            <option value="48">До 48 часов</option>
+            <option value="70" selected>До 70 часов</option>
+          </select>
+          <small id="duration-help">Для каждого показанного варианта</small>
+        </label>
+      </div>
       <p class="scope-note" id="scope-note" aria-live="polite"></p>
     </section>
     <section class="trip-strip" aria-label="Параметры поездки">

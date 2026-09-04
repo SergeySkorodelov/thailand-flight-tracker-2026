@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
   checkIntervalHours: 6,
   currency: "RUB",
   timezone: "Europe/Moscow",
-  maxTravelHours: 20,
+  maxTravelHours: 70,
   maxInternationalStops: 1,
 };
 
@@ -20,6 +20,7 @@ const state = {
   records: [],
   period: "7d",
   airports: new Set(DEFAULT_CONFIG.airports),
+  maxTravelHours: 70,
   route: "all",
   journalSearch: "",
   mobileRowsLimit: 20,
@@ -53,7 +54,7 @@ function registerServiceWorker() {
 function cacheElements() {
   const ids = [
     "theme-toggle", "theme-label", "freshness", "json-file", "reload-data",
-    "period-filter", "airport-filter", "route-filter", "reset-filters", "mobile-filter-toggle", "filters-body",
+    "period-filter", "airport-filter", "duration-filter", "route-filter", "reset-filters", "mobile-filter-toggle", "filters-body",
     "kpi-current", "kpi-current-note", "kpi-current-link", "kpi-route", "kpi-route-note", "scope-note", "selected-airports",
     "discovery-counts", "discovery-events", "discovery-updated",
     "kpi-seven", "kpi-seven-note", "kpi-signal", "kpi-signal-note", "signal-card",
@@ -117,15 +118,23 @@ function bindEvents() {
     render();
   });
 
+  els.durationFilter.addEventListener("change", () => {
+    state.maxTravelHours = Number(els.durationFilter.value) || 70;
+    state.mobileRowsLimit = 20;
+    render();
+  });
+
   els.resetFilters.addEventListener("click", () => {
     state.period = "7d";
     state.route = "all";
     state.airports = new Set(state.config.airports);
+    state.maxTravelHours = 70;
     els.journalSearch.value = "";
     state.journalSearch = "";
     state.mobileRowsLimit = 20;
     [...els.periodFilter.querySelectorAll("button")].forEach((button) => button.classList.toggle("is-active", button.dataset.period === "7d"));
     els.routeFilter.value = "all";
+    els.durationFilter.value = "70";
     renderAirportFilters();
     render();
   });
@@ -239,6 +248,7 @@ function applyData(data, sourceLabel) {
   state.events = Array.isArray(data.events) ? data.events : [];
   state.discoveryRuns = Array.isArray(data.discoveryRuns) ? data.discoveryRuns : [];
   state.airports = new Set(state.config.airports);
+  state.maxTravelHours = 70;
   state.route = "all";
   state.sourceLabel = sourceLabel;
   els.dataSourceLabel.textContent = `Источник данных: ${sourceLabel}`;
@@ -327,7 +337,7 @@ function getStatus(recordOrPrice, config) {
 }
 
 function buildRouteOptions() {
-  const routes = [...new Set(state.records.filter((r) => state.airports.has(r.origin) && FlightRules.eligibility(r) !== "excluded").map((record) => record.route).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
+  const routes = [...new Set(state.records.filter((r) => state.airports.has(r.origin) && FlightRules.eligibility(r) !== "excluded" && isWithinDuration(r)).map((record) => record.route).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
   if (!routes.includes(state.route)) state.route = "all";
   els.routeFilter.innerHTML = `<option value="all">Все маршруты</option>${routes.map((route) => `<option value="${escapeHtml(route)}">${escapeHtml(route)}</option>`).join("")}`;
   els.routeFilter.value = state.route;
@@ -341,8 +351,8 @@ function render() {
   scoped.forEach((r) => { r.bestFlag = r.totalPrice === bestAt.get(r.timestamp); r.status = getStatus(r, state.config); });
   setText(els.selectedAirports, [...state.airports].join(" · ") || "Не выбраны");
   setText(els.scopeNote, !state.airports.size ? "Выберите хотя бы один аэропорт, чтобы увидеть результаты."
-    : scoped.some((r) => FlightRules.eligibility(r) === "pending") ? "В истории есть цены без подтверждённого возвращения домой. Они показаны предварительно; это не рекомендация к покупке."
-    : "Все показатели ниже учитывают выбранные аэропорты. Обратно — дата, когда вы уже дома, а не вылет из Таиланда.");
+    : scoped.some((r) => FlightRules.eligibility(r) === "pending") ? `Показаны варианты до ${state.maxTravelHours} ч. В истории есть цены без подтверждённого возвращения домой — это не рекомендация к покупке.`
+    : `Все показатели ниже учитывают выбранные аэропорты и перелёты до ${state.maxTravelHours} ч. Обратно — дата, когда вы уже дома.`);
   const visible = applyPeriod(scoped);
   renderFreshness();
   renderKpis(scoped);
@@ -353,7 +363,11 @@ function render() {
 }
 
 function getScopedRecords() {
-  return state.records.filter((record) => FlightRules.eligibility(record) !== "excluded" && state.airports.has(record.origin) && (state.route === "all" || record.route === state.route));
+  return state.records.filter((record) => FlightRules.eligibility(record) !== "excluded" && state.airports.has(record.origin) && isWithinDuration(record) && (state.route === "all" || record.route === state.route));
+}
+
+function isWithinDuration(record) {
+  return Number.isFinite(record.travelTimeHours) && record.travelTimeHours > 0 && record.travelTimeHours <= state.maxTravelHours;
 }
 
 function applyPeriod(records) {
