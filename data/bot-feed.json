@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-04T17:08:39.860Z",
+  "sourceUpdatedAt": "2026-09-04T12:45:36+03:00",
+  "latestCheckAt": "2026-09-04T12:45:36+03:00",
+  "scope": {
+    "departureDates": [
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "homeArrivalDates": [
+      "2027-01-08",
+      "2027-01-09",
+      "2027-01-10"
+    ],
+    "preferredHomeArrivalDates": [
+      "2027-01-09",
+      "2027-01-10"
+    ],
+    "airports": [
+      "KZN",
+      "MOW",
+      "NBC"
+    ]
+  },
+  "rules": {
+    "take": "Итоговая цена за двоих не выше 175 000 ₽",
+    "watch": "Итоговая цена за двоих от 175 001 ₽ до 200 000 ₽",
+    "directMoscowTake": "Прямой рейс из Москвы за двоих не выше 250 000 ₽",
+    "directMoscowWatch": "Прямой рейс из Москвы за двоих от 250 001 ₽ до 300 000 ₽",
+    "expensive": "Итоговая цена за двоих выше 200 000 ₽",
+    "intervalHours": 6
+  },
+  "signal": {
+    "status": "stale",
+    "label": "ОБНОВИТЬ ЦЕНУ",
+    "urgent": false,
+    "notify": false,
+    "observedAt": "2026-09-04T12:45:36+03:00",
+    "expiresAt": "2026-09-04T15:45:36.000Z",
+    "missingChecks": [
+      "возвращение домой",
+      "багаж",
+      "обязательные сборы",
+      "оплата российской картой",
+      "дорога из/до Москвы"
+    ],
+    "reason": "Цена устарела; требуется новая проверка",
+    "route": "MOW→BKK / BKK→MOW",
+    "departureDate": "2026-12-18",
+    "returnDate": "2027-01-08",
+    "homeArrivalDate": null,
+    "airline": "China Eastern + Shanghai Airlines",
+    "stops": 1,
+    "travelTimeHours": 19.17,
+    "baggage": "23 кг — 4 места по данным выдачи",
+    "totalPrice": 213372,
+    "pricePerPerson": 106686,
+    "payment": "Цена в ₽; российскую карту уточнить у продавца",
+    "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+    "sourceType": "search"
+  },
+  "alerts": []
+}
