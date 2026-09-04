@@ -243,12 +243,13 @@ async function loadSelectedFile(event) {
 }
 
 function applyData(data, sourceLabel) {
-  state.config = { ...DEFAULT_CONFIG, ...(data.config || {}), ...FlightRules.scope };
+  state.config = { ...DEFAULT_CONFIG, ...(data.config || {}), ...FlightRules.scope, maxTravelHours: 70 };
   state.records = deriveRecords(Array.isArray(data.checks) ? data.checks : [], state.config);
   state.events = Array.isArray(data.events) ? data.events : [];
   state.discoveryRuns = Array.isArray(data.discoveryRuns) ? data.discoveryRuns : [];
   state.airports = new Set(state.config.airports);
   state.maxTravelHours = 70;
+  els.durationFilter.value = "70";
   state.route = "all";
   state.sourceLabel = sourceLabel;
   els.dataSourceLabel.textContent = `Источник данных: ${sourceLabel}`;
@@ -946,7 +947,7 @@ function renderDiscovery() {
   const latest = runs.length ? Math.max(...runs.map((r) => Date.parse(r.timestamp))) : null;
   setText(els.discoveryUpdated, latest ? `Проверено ${formatDateTime(latest)}` : "Ещё не выполнен");
   const relevant = state.events.filter((event) => state.airports.has(event.origin)
-    && FlightRules.eligibility(event) !== "excluded" && (state.route === "all" || event.route === state.route)
+    && FlightRules.eligibility(event) !== "excluded" && isWithinDuration(event) && (state.route === "all" || event.route === state.route)
     && FlightRules.safeUrl(event.source) && Number.isFinite(Date.parse(event.timestamp)));
   const now = Date.now();
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Moscow" }).format(new Date(now));
