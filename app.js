@@ -418,10 +418,10 @@ function renderKpis(records) {
   const status = getStatus(best, state.config);
 
   setText(els.kpiCurrent, formatCurrency(best.totalPrice));
-  setText(els.kpiCurrentNote, `${best.airline} · ${formatDateTime(latestTimestamp)}${FlightRules.eligibility(best) === "pending" ? " · домой: уточнить" : ""}`);
+  setText(els.kpiCurrentNote, `${best.airline} · ${journeySummary(best)} · ${formatDateTime(latestTimestamp)}${FlightRules.eligibility(best) === "pending" ? " · домой: уточнить" : ""}`);
   els.kpiCurrentLink.innerHTML = offerLink(best);
   setText(els.kpiRoute, best.route || "Маршрут не указан");
-  setText(els.kpiRouteNote, tripDates(best));
+  setText(els.kpiRouteNote, `${tripDates(best)} · ${journeySummary(best)}`);
   setText(els.kpiSeven, formatCurrency(minSeven));
   setText(els.kpiSevenNote, minSeven === null ? "За последние 7 дней проверок нет" : minSeven === best.totalPrice ? "Последняя цена — минимум недели" : `Последняя выше на ${formatCurrency(best.totalPrice - minSeven)}`);
   setText(els.kpiSignal, statusLabel(status));
@@ -468,6 +468,8 @@ function renderRouteSummary(records) {
         <span class="route-card__price">${formatCurrency(current.totalPrice)}</span>
       </div>
       <div class="route-card__metrics">
+        <span>Пересадки <b>${escapeHtml(formatStops(current.stops))}</b></span>
+        <span>В пути <b>${formatDuration(current.travelTimeHours)}</b></span>
         <span>Мин. периода <b>${formatCurrency(min)}</b></span>
         <span>Δ 24 часа <b class="${deltaClass(current.delta24h)}">${formatDelta(current.delta24h)}</b></span>
       </div>
@@ -551,7 +553,7 @@ function drawTrendChart(records) {
   const grouped = groupBy(records, (record) => record.timestamp);
   const points = [...grouped.values()].map((items) => {
     const best = items.reduce((winner, item) => !winner || item.totalPrice < winner.totalPrice ? item : winner, null);
-    return { x: best.timestampMs, y: best.totalPrice };
+    return { x: best.timestampMs, y: best.totalPrice, record: best };
   }).sort((a, b) => a.x - b.x);
 
   els.trendEmpty.hidden = points.length > 0;
@@ -634,7 +636,7 @@ function drawTrendChart(records) {
     y: point.y,
     anchorX: point.x,
     anchorY: point.y,
-    tooltip: `${escapeHtml(formatChartDate(point.value.x))}<br><b>${escapeHtml(formatCurrency(point.value.y))}</b> за двоих`,
+    tooltip: `${escapeHtml(formatChartDate(point.value.x))}<br>${escapeHtml(point.value.record.route)}<br>${escapeHtml(journeySummary(point.value.record))}<br><b>${escapeHtml(formatCurrency(point.value.y))}</b> за двоих`,
   }));
 
   drawTimeLabels(ctx, points, pad, plotW, height);
@@ -649,9 +651,10 @@ function drawAirportChart(records) {
     if (!items.length) return { airport, current: null, min7: null };
     const latest = Math.max(...items.map((item) => item.timestampMs));
     const currentItems = items.filter((item) => item.timestampMs === latest);
-    const current = Math.min(...currentItems.map((item) => item.totalPrice));
+    const currentRecord = currentItems.reduce((best, item) => !best || item.totalPrice < best.totalPrice ? item : best, null);
     const min7Items = items.filter((item) => item.timestampMs >= Date.now() - 7 * 86400000);
-    return { airport, current, min7: min7Items.length ? Math.min(...min7Items.map((item) => item.totalPrice)) : null };
+    const min7Record = min7Items.reduce((best, item) => !best || item.totalPrice < best.totalPrice ? item : best, null);
+    return { airport, current: currentRecord.totalPrice, min7: min7Record?.totalPrice ?? null, currentRecord, min7Record };
   });
   const hasData = data.some((item) => item.current !== null);
   els.airportEmpty.hidden = hasData;
@@ -676,11 +679,11 @@ function drawAirportChart(records) {
     const labelLevel = index % 2 === 0 ? pad.top + 2 : pad.top + 16;
     if (Number.isFinite(item.current)) {
       drawBarValue(ctx, item.current, center - 4, labelLevel, "right", css("--chart-line"));
-      chartHits.airport.push({ ...currentBar, anchorX: currentBar.x + currentBar.width / 2, anchorY: currentBar.y, tooltip: `${item.airport} · текущая<br><b>${escapeHtml(formatCurrency(item.current))}</b> за двоих` });
+      chartHits.airport.push({ ...currentBar, anchorX: currentBar.x + currentBar.width / 2, anchorY: currentBar.y, tooltip: `${item.airport} · текущая<br>${escapeHtml(item.currentRecord.route)}<br>${escapeHtml(journeySummary(item.currentRecord))}<br><b>${escapeHtml(formatCurrency(item.current))}</b> за двоих` });
     }
     if (Number.isFinite(item.min7)) {
       drawBarValue(ctx, item.min7, center + 4, labelLevel, "left", css("--chart-min"));
-      chartHits.airport.push({ ...minBar, anchorX: minBar.x + minBar.width / 2, anchorY: minBar.y, tooltip: `${item.airport} · минимум за 7 дней<br><b>${escapeHtml(formatCurrency(item.min7))}</b> за двоих` });
+      chartHits.airport.push({ ...minBar, anchorX: minBar.x + minBar.width / 2, anchorY: minBar.y, tooltip: `${item.airport} · минимум за 7 дней<br>${escapeHtml(item.min7Record.route)}<br>${escapeHtml(journeySummary(item.min7Record))}<br><b>${escapeHtml(formatCurrency(item.min7))}</b> за двоих` });
     }
     ctx.fillStyle = css("--text-soft");
     ctx.font = "700 11px Inter, Segoe UI, sans-serif";
@@ -920,6 +923,13 @@ function formatStops(stops) {
   return `${number} пересадки`;
 }
 
+function journeySummary(record) {
+  const hasStops = record && record.stops !== null && record.stops !== undefined && record.stops !== "";
+  const stops = hasStops ? formatStops(record.stops) : "Пересадки не указаны";
+  const duration = Number.isFinite(record?.travelTimeHours) ? formatDuration(record.travelTimeHours) : "Время не указано";
+  return `${stops} · ${duration}`;
+}
+
 function formatSource(source) {
   if (!source) return "—";
   try {
@@ -967,7 +977,7 @@ function renderDiscovery() {
   const events = relevant.filter((e) => e.kind !== "baseline" && Date.parse(e.timestamp) <= now && Date.parse(e.timestamp) >= now - 30 * 86400000)
     .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
   els.discoveryEvents.innerHTML = `<p class="scope-note">${latest ? "Счётчики охватывают накопленную историю проверок. Первый список — исходная база, а не новые рейсы. Отмена или распродажа требуют подтверждения." : "Ежедневный поиск ещё не завершён. До первой проверки количество новых и исчезнувших рейсов неизвестно."}</p>`
-    + events.map((e) => `<article class="discovery-event"><div><strong>${escapeHtml(e.route)}</strong><p>${escapeHtml(e.kind === "cancelled" || e.kind === "sold_out" ? e.confirmed === true ? labels[e.kind] : "Статус не подтверждён" : labels[e.kind] || "Изменение")} · ${formatDateTime(e.timestamp)}</p><p>${escapeHtml(tripDates(e))}</p>${e.note ? `<p>${escapeHtml(e.note)}</p>` : ""}</div>${offerLink(e)}</article>`).join("");
+    + events.map((e) => `<article class="discovery-event"><div><strong>${escapeHtml(e.route)}</strong><p>${escapeHtml(e.kind === "cancelled" || e.kind === "sold_out" ? e.confirmed === true ? labels[e.kind] : "Статус не подтверждён" : labels[e.kind] || "Изменение")} · ${formatDateTime(e.timestamp)}</p><p>${escapeHtml(tripDates(e))}</p><p><b>${escapeHtml(journeySummary(e))}</b></p>${e.note ? `<p>${escapeHtml(e.note)}</p>` : ""}</div>${offerLink(e)}</article>`).join("");
 }
 
 function statusLabel(status) {

@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "thailand-flight-tracker-v5";
+const CACHE_NAME = "thailand-flight-tracker-v6";
 const APP_SHELL = ["./", "./index.html", "./app.css", "./app.js", "./rules.js", "./manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
