@@ -1,0 +1,12 @@
+{
+  "name": "Таиланд · трекер авиабилетов",
+  "short_name": "Билеты в Таиланд",
+  "description": "Цены, динамика и сигналы для поездки в Таиланд",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f6ef",
+  "theme_color": "#177b77",
+  "orientation": "any"
+}

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f8f6ef">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Билеты в Таиланд">
+  <title>Таиланд · трекер авиабилетов</title>
+  <meta name="description" content="Дашборд цен на авиабилеты в Таиланд для двух взрослых: декабрь 2026 — январь 2027.">
+  <meta property="og:title" content="Таиланд · трекер авиабилетов">
+  <meta property="og:description" content="Цены, динамика и сигнал к покупке">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Таиланд · трекер авиабилетов">
+  <meta name="twitter:description" content="Цены, динамика и сигнал к покупке">
+  <meta name="twitter:image" content="./og.png">
+  <script>
+    (() => {
+      const saved = localStorage.getItem('flight-tracker-theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = saved || (systemDark ? 'dark' : 'light');
+    })();
+  </script>
+  <link rel="stylesheet" href="./app.css">
+  <link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body>
+  <a class="skip-link" href="#content">Перейти к содержанию</a>
+
+  <header class="topbar">
+    <div class="shell topbar__inner">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">✦</div>
+        <div>
+          <p class="eyebrow">Поездка в Таиланд · 2 взрослых</p>
+          <h1>Трекер авиабилетов</h1>
+        </div>
+      </div>
+      <div class="topbar__actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить цветовую тему" aria-pressed="false">
+          <span class="theme-toggle__track" aria-hidden="true">
+            <span class="theme-toggle__sun">☀</span>
+            <span class="theme-toggle__moon">☾</span>
+            <span class="theme-toggle__thumb"></span>
+          </span>
+          <span class="theme-toggle__label" id="theme-label">Светлая</span>
+        </button>
+        <div class="freshness" id="freshness" aria-live="polite">
+          <span class="freshness__dot"></span>
+          <span>Ожидаем первую проверку</span>
+        </div>
+        <label class="button button--secondary" for="json-file">
+          <span aria-hidden="true">↥</span>
+          Открыть JSON
+        </label>
+        <input id="json-file" type="file" accept="application/json,.json" hidden>
+        <button class="button button--primary" id="reload-data" type="button">
+          <span aria-hidden="true">↻</span>
+          Обновить
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell" id="content">
+    <section class="airport-selector panel" aria-label="Выбор аэропортов для всего отчёта">
+      <fieldset class="control-group">
+        <legend>Откуда летим</legend>
+        <div class="chip-list" id="airport-filter"></div>
+      </fieldset>
+      <p class="scope-note" id="scope-note" aria-live="polite"></p>
+    </section>
+    <section class="trip-strip" aria-label="Параметры поездки">
+      <div class="trip-strip__item">
+        <span class="trip-strip__label">Туда</span>
+        <strong>18–20 дек 2026</strong>
+      </div>
+      <div class="trip-strip__divider" aria-hidden="true"></div>
+      <div class="trip-strip__item">
+        <span class="trip-strip__label">Уже дома · Набережные Челны</span>
+        <strong>8–10 янв · лучше 9–10</strong>
+      </div>
+      <div class="trip-strip__divider" aria-hidden="true"></div>
+      <div class="trip-strip__item trip-strip__item--wide">
+        <span class="trip-strip__label">Старт</span>
+        <strong id="selected-airports">KZN · MOW · NBC</strong>
+      </div>
+      <div class="trip-strip__divider" aria-hidden="true"></div>
+      <div class="trip-strip__item">
+        <span class="trip-strip__label">Таиланд</span>
+        <strong>BKK · HKT</strong>
+      </div>
+      <span class="threshold-pill">Брать ≤ <b>175 000 ₽</b></span>
+    </section>
+
+    <section class="filters panel" aria-labelledby="filters-title">
+      <div class="section-heading section-heading--compact">
+        <div>
+          <p class="eyebrow">Срез данных</p>
+          <h2 id="filters-title">Фильтры</h2>
+        </div>
+        <div class="filters__actions">
+          <button class="text-button mobile-only" type="button" id="mobile-filter-toggle" aria-expanded="false" aria-controls="filters-body">
+            Настроить <span aria-hidden="true">⌄</span>
+          </button>
+          <button class="text-button" type="button" id="reset-filters">Сбросить</button>
+        </div>
+      </div>
+      <div class="filters__body" id="filters-body">
+      <div class="filters__grid">
+        <fieldset class="control-group">
+          <legend>Период</legend>
+          <div class="segmented" id="period-filter">
+            <button type="button" data-period="24h">24 часа</button>
+            <button type="button" data-period="7d" class="is-active">7 дней</button>
+            <button type="button" data-period="all">Всё время</button>
+          </div>
+        </fieldset>
+        <label class="control-group">
+          <span>Маршрут</span>
+          <select id="route-filter">
+            <option value="all">Все маршруты</option>
+          </select>
+        </label>
+      </div>
+      </div>
+    </section>
+
+    <section class="kpi-grid" id="overview" aria-label="Ключевые показатели">
+      <article class="kpi-card kpi-card--price">
+        <div class="kpi-card__top">
+          <span>Текущий минимум</span>
+          <span class="kpi-card__icon" aria-hidden="true">₽</span>
+        </div>
+        <strong id="kpi-current">—</strong>
+        <small id="kpi-current-note">Нет данных</small>
+        <div id="kpi-current-link"></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-card__top">
+          <span>Лучший маршрут</span>
+          <span class="kpi-card__icon" aria-hidden="true">⌁</span>
+        </div>
+        <strong id="kpi-route" class="kpi-card__route">—</strong>
+        <small id="kpi-route-note">Нет данных</small>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-card__top">
+          <span>Минимум за 7 дней</span>
+          <span class="kpi-card__icon" aria-hidden="true">↓</span>
+        </div>
+        <strong id="kpi-seven">—</strong>
+        <small id="kpi-seven-note">Нет данных</small>
+      </article>
+      <article class="kpi-card kpi-card--signal" id="signal-card">
+        <div class="kpi-card__top">
+          <span>Сигнал</span>
+          <span class="kpi-card__icon" aria-hidden="true">●</span>
+        </div>
+        <strong id="kpi-signal">НЕТ ДАННЫХ</strong>
+        <small id="kpi-signal-note">Следующая проверка через 6 часов</small>
+      </article>
+    </section>
+
+    <section class="chart-grid" aria-label="Графики цен">
+      <article class="panel chart-card chart-card--wide">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Тренд</p>
+            <h2>Динамика лучшей цены</h2>
+          </div>
+          <div class="legend" aria-label="Легенда графика">
+            <span><i class="legend__line"></i> Лучшая цена</span>
+            <span><i class="legend__dash"></i> Порог «брать»</span>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trend-chart" role="img" tabindex="0" aria-label="График изменения лучшей цены по времени. Нажмите на точку, чтобы увидеть точную цену."></canvas>
+          <div class="chart-tooltip" id="trend-tooltip" role="status" aria-live="polite" hidden></div>
+          <div class="chart-empty" id="trend-empty">Динамика появится после первой проверки</div>
+        </div>
+        <div class="chart-summary" id="trend-summary">Порог покупки: 175 000 ₽ за двоих</div>
+      </article>
+
+      <article class="panel chart-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Точки старта</p>
+            <h2>Сравнение аэропортов</h2>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap--bars">
+          <canvas id="airport-chart" role="img" tabindex="0" aria-label="Сравнение цен из Казани, Москвы и Бегишево. Нажмите на столбец, чтобы увидеть точную цену."></canvas>
+          <div class="chart-tooltip" id="airport-tooltip" role="status" aria-live="polite" hidden></div>
+          <div class="chart-empty" id="airport-empty">Пока нечего сравнивать</div>
+        </div>
+        <div class="mini-legend">
+          <span><i class="mini-legend__dot mini-legend__dot--current"></i> Текущая</span>
+          <span><i class="mini-legend__dot mini-legend__dot--min"></i> Мин. 7 дней</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel route-panel" id="routes" aria-labelledby="route-summary-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Маршруты и даты</p>
+          <h2 id="route-summary-title">Где цена меняется</h2>
+        </div>
+        <span class="section-meta" id="route-count">0 маршрутов</span>
+      </div>
+      <div class="route-summary" id="route-summary">
+        <div class="empty-state">
+          <span class="empty-state__icon" aria-hidden="true">⌁</span>
+          <strong>Нет накопленной истории</strong>
+          <p>После проверок здесь появятся лучшие цены по маршрутам и датам.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel discovery-panel" aria-labelledby="discovery-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">Ежедневный поиск</p><h2 id="discovery-title">Новые рейсы и изменения</h2></div>
+        <span class="section-meta" id="discovery-updated">Ещё не выполнен</span>
+      </div>
+      <div id="discovery-counts" class="discovery-counts"></div>
+      <div id="discovery-events"></div>
+    </section>
+
+    <section class="panel journal" id="journal" aria-labelledby="journal-title">
+      <div class="section-heading journal__heading">
+        <div>
+          <p class="eyebrow">Полная история</p>
+          <h2 id="journal-title">Журнал проверок</h2>
+        </div>
+        <div class="journal__tools">
+          <label class="search-field">
+            <span class="sr-only">Поиск по журналу</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="journal-search" type="search" placeholder="Маршрут, авиакомпания…">
+          </label>
+          <button class="button button--secondary button--small" id="export-csv" type="button">Скачать CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Проверено</th>
+              <th>Маршрут / даты</th>
+              <th>Авиакомпания</th>
+              <th>Пересадки</th>
+              <th>В пути</th>
+              <th>Багаж</th>
+              <th class="is-number">Цена / 2 чел.</th>
+              <th class="is-number">Цена / чел.</th>
+              <th>Оплата</th>
+              <th>Источник</th>
+              <th>Best</th>
+              <th class="is-number">Δ 24ч</th>
+              <th class="is-number">Δ 7д</th>
+              <th class="is-number">Мин. 7д</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody id="journal-body"></tbody>
+        </table>
+        <div class="table-empty" id="journal-empty">
+          <strong>Журнал пока пуст</strong>
+          <span>Первая строка появится после очередной проверки цен.</span>
+        </div>
+      </div>
+      <div class="journal-cards" id="journal-cards" aria-live="polite"></div>
+      <button class="journal-more button button--secondary" id="journal-more" type="button" hidden>Показать ещё</button>
+      <div class="table-footer">
+        <span id="row-count">0 записей</span>
+        <span>Все производные показатели рассчитываются в браузере</span>
+      </div>
+    </section>
+
+    <section class="automation-note" aria-label="Структура регулярного обновления">
+      <div class="automation-note__icon" aria-hidden="true">↻</div>
+      <div>
+        <strong>Цены — каждые 6 часов · поиск новых рейсов — ежедневно</strong>
+        <p>Проверки выполняются на включённом компьютере. Для обновления общей ссылки нужна публикация данных. Старые цены не означают, что билеты ещё доступны. Отмена и распродажа отмечаются только при подтверждении источником.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer shell">
+    <span>Таиланд · вылет 18–20.12.2026 · дома 08–10.01.2027</span>
+    <span id="data-source-label">Источник данных: flight-checks.js</span>
+  </footer>
+
+  <nav class="mobile-nav" aria-label="Разделы дашборда">
+    <a href="#overview" data-section="overview"><span aria-hidden="true">⌂</span><b>Обзор</b></a>
+    <a href="#routes" data-section="routes"><span aria-hidden="true">⌁</span><b>Маршруты</b></a>
+    <a href="#journal" data-section="journal"><span aria-hidden="true">≡</span><b>Журнал</b></a>
+  </nav>
+
+  <script src="./data/flight-checks.js"></script>
+  <script src="./rules.js"></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
