@@ -13,11 +13,11 @@
   <meta property="og:title" content="Таиланд · трекер авиабилетов">
   <meta property="og:description" content="Цены, динамика и сигнал к покупке">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="./og.png">
+  <meta property="og:image" content="__SITE_ORIGIN__/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Таиланд · трекер авиабилетов">
   <meta name="twitter:description" content="Цены, динамика и сигнал к покупке">
-  <meta name="twitter:image" content="./og.png">
+  <meta name="twitter:image" content="__SITE_ORIGIN__/og.png">
   <script>
     (() => {
       const saved = localStorage.getItem('flight-tracker-theme');
@@ -150,16 +150,17 @@
           <span class="kpi-card__icon" aria-hidden="true">₽</span>
         </div>
         <strong id="kpi-current">—</strong>
-        <small id="kpi-current-note">Нет данных</small>
+        <div class="kpi-card__details" id="kpi-current-note">Нет данных</div>
         <div id="kpi-current-link"></div>
       </article>
-      <article class="kpi-card">
+      <article class="kpi-card kpi-card--route-highlight">
         <div class="kpi-card__top">
           <span>Лучший маршрут</span>
           <span class="kpi-card__icon" aria-hidden="true">⌁</span>
         </div>
-        <strong id="kpi-route" class="kpi-card__route">—</strong>
-        <small id="kpi-route-note">Нет данных</small>
+        <strong id="kpi-route">—</strong>
+        <div class="kpi-card__details" id="kpi-route-note">Нет данных</div>
+        <div id="kpi-route-link"></div>
       </article>
       <article class="kpi-card">
         <div class="kpi-card__top">
@@ -167,7 +168,8 @@
           <span class="kpi-card__icon" aria-hidden="true">↓</span>
         </div>
         <strong id="kpi-seven">—</strong>
-        <small id="kpi-seven-note">Нет данных</small>
+        <div class="kpi-card__details" id="kpi-seven-note">Нет данных</div>
+        <div id="kpi-seven-link"></div>
       </article>
       <article class="kpi-card kpi-card--signal" id="signal-card">
         <div class="kpi-card__top">
@@ -175,7 +177,7 @@
           <span class="kpi-card__icon" aria-hidden="true">●</span>
         </div>
         <strong id="kpi-signal">НЕТ ДАННЫХ</strong>
-        <small id="kpi-signal-note">Следующая проверка через 6 часов</small>
+        <div class="kpi-card__details" id="kpi-signal-note">Расписание проверок ещё не зафиксировано</div>
       </article>
     </section>
 

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-04T17:08:39.860Z",
-  "sourceUpdatedAt": "2026-09-04T12:45:36+03:00",
-  "latestCheckAt": "2026-09-04T12:45:36+03:00",
+  "generatedAt": "2026-09-04T23:59:55.963Z",
+  "sourceUpdatedAt": "2026-09-04T23:57:40.000Z",
+  "latestCheckAt": "2026-09-05T02:57:40+03:00",
   "scope": {
     "departureDates": [
       "2026-12-18",
@@ -33,33 +33,67 @@
     "intervalHours": 6
   },
   "signal": {
-    "status": "stale",
-    "label": "ОБНОВИТЬ ЦЕНУ",
+    "status": "expensive",
+    "label": "ДОРОГО",
     "urgent": false,
     "notify": false,
-    "observedAt": "2026-09-04T12:45:36+03:00",
-    "expiresAt": "2026-09-04T15:45:36.000Z",
+    "observedAt": "2026-09-05T02:57:40+03:00",
+    "expiresAt": "2026-09-05T05:57:40.000Z",
     "missingChecks": [
       "возвращение домой",
-      "багаж",
       "обязательные сборы",
       "оплата российской картой",
       "дорога из/до Москвы"
     ],
-    "reason": "Цена устарела; требуется новая проверка",
+    "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой, дорога из/до Москвы",
     "route": "MOW→BKK / BKK→MOW",
     "departureDate": "2026-12-18",
     "returnDate": "2027-01-08",
-    "homeArrivalDate": null,
-    "airline": "China Eastern + Shanghai Airlines",
+    "homeArrivalDate": "2027-01-09",
+    "homeArrivalAt": null,
+    "outbound": {
+      "route": "SVO→BKK",
+      "departureAt": "2026-12-18T17:25:00+03:00",
+      "arrivalAt": "2026-12-19T13:40:00+07:00",
+      "durationHours": 16.25,
+      "stops": 1,
+      "layovers": [
+        {
+          "airport": "PEK",
+          "durationHours": null
+        }
+      ]
+    },
+    "inbound": {
+      "route": "BKK→DME",
+      "departureAt": "2027-01-08T11:25:00+07:00",
+      "arrivalAt": "2027-01-08T23:20:00+03:00",
+      "durationHours": 15.9167,
+      "stops": 1,
+      "layovers": [
+        {
+          "airport": "SHJ",
+          "durationHours": null
+        }
+      ]
+    },
+    "airline": "Air China + Air Arabia",
     "stops": 1,
-    "travelTimeHours": 19.17,
-    "baggage": "23 кг — 4 места по данным выдачи",
-    "totalPrice": 213372,
-    "pricePerPerson": 106686,
+    "travelTimeHours": 16.25,
+    "baggage": "20 кг — 2 места по данным выдачи",
+    "totalPrice": 254426,
+    "pricePerPerson": 127213,
     "payment": "Цена в ₽; российскую карту уточнить у продавца",
     "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
     "sourceType": "search"
+  },
+  "monitor": {
+    "lastAttemptAt": "2026-09-05T02:57:40+03:00",
+    "lastAttemptStatus": "partial",
+    "lastAttemptNote": "Живая выдача доступна. Сохранены вариант с одной пересадкой и прямой вариант; остальные аэропорты и даты в этой ручной проверке не охвачены.",
+    "lastAttemptError": null,
+    "lastSuccessfulCheckAt": "2026-09-05T02:57:40+03:00",
+    "nextScheduledAt": "2026-09-05T08:57:40+03:00"
   },
   "alerts": []
 }

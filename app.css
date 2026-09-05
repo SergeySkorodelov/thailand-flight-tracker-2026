@@ -339,7 +339,7 @@ main { padding-block: 24px 12px; }
   .discovery-counts { grid-template-columns: 1fr; }
   .discovery-event { align-items: flex-start; flex-direction: column; }
   .offer-link { width: 100%; }
-  .kpi-card > small { -webkit-line-clamp: unset !important; overflow: visible !important; }
+  .kpi-card__details { overflow: visible !important; }
 }
 
 .segmented { display: inline-flex; width: 100%; padding: 3px; border-radius: 11px; background: var(--surface-soft); }
@@ -390,7 +390,7 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 }
 
 .kpi-card {
-  min-height: 150px;
+  min-height: 330px;
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -402,10 +402,31 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 .kpi-card__top { display: flex; align-items: center; justify-content: space-between; color: var(--text-soft); font-size: 12px; font-weight: 700; }
 .kpi-card__icon { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 9px; background: var(--surface-soft); color: var(--text-soft); }
 .kpi-card > strong { display: block; margin-top: 18px; font-size: clamp(24px, 3vw, 34px); line-height: 1.1; letter-spacing: -0.04em; }
-.kpi-card > small { display: block; margin-top: 7px; color: var(--text-soft); font-size: 11px; }
+.kpi-card__details { display: block; margin-top: 10px; color: var(--text-soft); font-size: 12px; }
 .kpi-card__route { font-size: clamp(17px, 2vw, 22px) !important; line-height: 1.2 !important; }
 .kpi-card--price { background: linear-gradient(145deg, var(--surface), var(--primary-soft)); }
 .kpi-card--price > strong { color: var(--primary-ink); }
+.kpi-card--route-highlight { background: linear-gradient(145deg, var(--surface), color-mix(in oklch, var(--watch-soft) 78%, var(--surface))); }
+.kpi-card--route-highlight > strong { color: color-mix(in oklch, var(--watch) 76%, var(--text)); }
+.ticket-identity { display: grid; gap: 2px; }
+.ticket-identity b { color: var(--text); font-size: 13px; }
+.ticket-identity span { color: var(--text-soft); font-size: 12px; }
+.ticket-legs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
+.ticket-leg { min-width: 0; padding: 8px; border: 1px solid color-mix(in oklch, var(--border) 74%, transparent); border-radius: 9px; background: color-mix(in oklch, var(--surface-raised) 82%, transparent); }
+.ticket-leg > div { display: grid; gap: 1px; margin-bottom: 5px; }
+.ticket-leg > div b { color: var(--primary-ink); font-size: 11px; }
+.ticket-leg > div span { overflow: hidden; color: var(--text); font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.ticket-leg p { margin-top: 2px; color: var(--text-soft); font-size: 10px; line-height: 1.35; }
+.legacy-journey, .home-status, .ticket-extra, .ticket-observed, .signal-reason, .monitor-error { margin-top: 7px; font-size: 11px; line-height: 1.4; }
+.legacy-journey { color: var(--text-soft); }
+.home-status { color: var(--text); font-weight: 650; }
+.ticket-extra { color: var(--primary-ink); }
+.ticket-observed { color: var(--text-faint); }
+.monitor-status { display: grid; gap: 6px; margin: 10px 0 0; }
+.monitor-status div { display: grid; gap: 1px; padding: 7px 8px; border-radius: 8px; background: color-mix(in oklch, var(--surface-raised) 78%, transparent); }
+.monitor-status dt { color: var(--text-soft); font-size: 10px; }
+.monitor-status dd { margin: 0; color: var(--text); font-size: 11px; font-weight: 700; }
+.monitor-error { color: var(--expensive); }
 .kpi-card--signal[data-signal="take"] { border-color: color-mix(in oklch, var(--take) 45%, var(--border)); background: var(--take-soft); }
 .kpi-card--signal[data-signal="watch"] { border-color: color-mix(in oklch, var(--watch) 45%, var(--border)); background: var(--watch-soft); }
 .kpi-card--signal[data-signal="expensive"] { border-color: color-mix(in oklch, var(--expensive) 45%, var(--border)); background: var(--expensive-soft); }
@@ -470,6 +491,7 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 .route-card__top { display: flex; justify-content: space-between; gap: 12px; }
 .route-card h3 { font-size: 14px; line-height: 1.3; }
 .route-card__dates { margin-top: 3px; color: var(--text-soft); font-size: 11px; }
+.route-card .ticket-legs { margin-top: 12px; }
 .route-card__price { white-space: nowrap; color: var(--primary-ink); font-weight: 800; }
 .route-card__metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 13px; }
 .route-card__metrics span { display: flex; flex-direction: column; padding: 8px; border-radius: 9px; background: var(--surface-soft); color: var(--text-soft); font-size: 10px; }
@@ -628,13 +650,15 @@ code { padding: 2px 5px; border-radius: 5px; background: var(--surface-soft); co
   .filters__grid { grid-template-columns: 1fr; }
   .filters__grid > :last-child { grid-column: auto; }
   .kpi-grid { grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 12px; }
-  .kpi-card { min-height: 126px; padding: 13px; border-radius: 14px; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-card { min-height: 0; padding: 15px; border-radius: 14px; }
   .kpi-card:hover { transform: none; }
   .kpi-card__top { gap: 6px; font-size: 10px; }
   .kpi-card__icon { width: 25px; height: 25px; border-radius: 8px; }
   .kpi-card > strong { margin-top: 13px; font-size: clamp(20px, 6.4vw, 27px); }
   .kpi-card__route { font-size: 14px !important; }
-  .kpi-card > small { display: -webkit-box; margin-top: 5px; overflow: hidden; font-size: 10px; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .kpi-card__details { margin-top: 8px; font-size: 11px; }
+  .ticket-legs { grid-template-columns: 1fr; }
   .chart-grid { gap: 10px; margin-top: 10px; }
   .chart-card { padding: 15px; }
   .chart-card .section-heading { margin-bottom: 10px; }
@@ -692,7 +716,7 @@ code { padding: 2px 5px; border-radius: 5px; background: var(--surface-soft); co
 @media (max-width: 360px) {
   .brand__mark { display: none; }
   .kpi-grid { grid-template-columns: 1fr; }
-  .kpi-card { min-height: 116px; }
+  .kpi-card { min-height: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

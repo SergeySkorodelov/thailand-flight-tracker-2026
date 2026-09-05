@@ -1,17 +1,35 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-04T12:45:36+03:00",
+    "updatedAt": "2026-09-04T23:57:40.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
   "config": {
     "passengers": 2,
-    "departureDates": ["2026-12-18", "2026-12-19", "2026-12-20"],
-    "homeArrivalDates": ["2027-01-08", "2027-01-09", "2027-01-10"],
-    "preferredHomeArrivalDates": ["2027-01-09", "2027-01-10"],
-    "airports": ["KZN", "MOW", "NBC"],
-    "destinations": ["BKK", "HKT"],
+    "departureDates": [
+      "2026-12-18",
+      "2026-12-19",
+      "2026-12-20"
+    ],
+    "homeArrivalDates": [
+      "2027-01-08",
+      "2027-01-09",
+      "2027-01-10"
+    ],
+    "preferredHomeArrivalDates": [
+      "2027-01-09",
+      "2027-01-10"
+    ],
+    "airports": [
+      "KZN",
+      "MOW",
+      "NBC"
+    ],
+    "destinations": [
+      "BKK",
+      "HKT"
+    ],
     "takePrice": 175000,
     "watchPrice": 200000,
     "directMoscowTakePrice": 250000,
@@ -25,6 +43,26 @@ window.FLIGHT_TRACKER_DATA = {
   "catalog": [],
   "events": [],
   "discoveryRuns": [],
+  "monitorRuns": [
+    {
+      "id": "monitor-20260905-025325-diagnostic",
+      "timestamp": "2026-09-05T02:53:25+03:00",
+      "status": "partial",
+      "coverage": [],
+      "nextScheduledAt": "2026-09-05T08:53:25+03:00",
+      "note": "Проверено состояние автоматизации: расписание активно, но после 04.09.2026 12:45 новые цены не были сохранены. Последняя фоновая попытка не получила доступную выдачу браузера; цены не выдумывались."
+    },
+    {
+      "id": "monitor-20260905-025740-mow-bkk",
+      "timestamp": "2026-09-05T02:57:40+03:00",
+      "status": "partial",
+      "coverage": [
+        "MOW→BKK / BKK→MOW; вылет 18.12.2026; обратный вылет 08.01.2027; два показательных варианта с багажом"
+      ],
+      "nextScheduledAt": "2026-09-05T08:57:40+03:00",
+      "note": "Живая выдача доступна. Сохранены вариант с одной пересадкой и прямой вариант; остальные аэропорты и даты в этой ручной проверке не охвачены."
+    }
+  ],
   "checks": [
     {
       "id": "20260903-082531-kzn-bkk",
@@ -841,6 +879,98 @@ window.FLIGHT_TRACKER_DATA = {
       "payment": "Цена в ₽; российскую карту уточнить у продавца",
       "source": "https://www.aviasales.ru/search/UFA1712HKT07012",
       "note": "Туда 24 ч 25 м с двумя пересадками, обратно 19 ч 55 м с двумя. Прибытие в Уфу 8 января в 00:40."
+    },
+    {
+      "id": "20260905-025740-mow-bkk-airchina-airarabia",
+      "timestamp": "2026-09-05T02:57:40+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Air China + Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 16.25,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-18T17:25:00+03:00",
+        "arrivalAt": "2026-12-19T13:40:00+07:00",
+        "durationHours": 16.25,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "PEK",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→DME",
+        "departureAt": "2027-01-08T11:25:00+07:00",
+        "arrivalAt": "2027-01-08T23:20:00+03:00",
+        "durationHours": 15.9167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 254426,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Цена за двоих с багажом показана в выдаче. Аэропорты пересадок видны; длительность пересадок не раскрыта. Возвращение из Москвы в Набережные Челны 9 января возможно только как план и не подтверждено."
+    },
+    {
+      "id": "20260905-025740-mow-bkk-aeroflot-direct",
+      "timestamp": "2026-09-05T02:57:40+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW · прямой",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 0,
+      "travelTimeHours": 10.1667,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-18T19:15:00+03:00",
+        "arrivalAt": "2026-12-19T08:20:00+07:00",
+        "durationHours": 9.0833,
+        "stops": 0,
+        "layovers": []
+      },
+      "inbound": {
+        "route": "BKK→SVO",
+        "departureAt": "2027-01-08T12:35:00+07:00",
+        "arrivalAt": "2027-01-08T18:45:00+03:00",
+        "durationHours": 10.1667,
+        "stops": 0,
+        "layovers": []
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 430468,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Прямой рейс в обе стороны. Цена за двоих с багажом показана в выдаче. Возвращение из Москвы в Набережные Челны 9 января пока не подтверждено."
     }
   ]
 };

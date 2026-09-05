@@ -36,8 +36,13 @@
     const age = now - Date.parse(row.timestamp);
     const fresh = Number.isFinite(age) && age >= -300000 && age <= (Number(config.checkIntervalHours) || 6) * 3600000;
     const available = !["cancelled", "sold_out", "not_found"].includes(row.availability);
-    const acceptableJourney = Number.isFinite(row.travelTimeHours) && row.travelTimeHours > 0 && row.travelTimeHours <= (config.maxTravelHours || 70)
-      && row.stops !== null && row.stops !== "" && Number.isFinite(Number(row.stops)) && Number(row.stops) <= (config.maxInternationalStops ?? 1);
+    const legs = [row.outbound, row.inbound];
+    const hasDetailedLegs = legs.every((leg) => leg && typeof leg === "object");
+    const acceptableJourney = hasDetailedLegs
+      ? legs.every((leg) => Number.isFinite(Number(leg.durationHours)) && Number(leg.durationHours) > 0 && Number(leg.durationHours) <= (config.maxTravelHours || 70)
+        && Number.isFinite(Number(leg.stops)) && Number(leg.stops) <= (config.maxInternationalStops ?? 1))
+      : Number.isFinite(row.travelTimeHours) && row.travelTimeHours > 0 && row.travelTimeHours <= (config.maxTravelHours || 70)
+        && row.stops !== null && row.stops !== "" && Number.isFinite(Number(row.stops)) && Number(row.stops) <= (config.maxInternationalStops ?? 1);
     if (!acceptableJourney) missing.push("длительность и пересадки");
     const status = !available ? "unavailable" : !fresh ? "stale" : eligibility(row) === "excluded" ? "excluded"
       : priceStatus === "take" && missing.length ? "watch" : priceStatus;
