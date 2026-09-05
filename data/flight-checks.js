@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-04T23:57:40.000Z",
+    "updatedAt": "2026-09-05T03:56:00.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -42,7 +42,19 @@ window.FLIGHT_TRACKER_DATA = {
   },
   "catalog": [],
   "events": [],
-  "discoveryRuns": [],
+  "discoveryRuns": [
+    {
+      "id": "discovery-20260905-065600-partial",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→BKK / BKK→KZN; 20.12.2026–09.01.2027",
+        "MOW→BKK / BKK→MOW; 19.12.2026–09.01.2027",
+        "MOW→BKK / BKK→MOW; 20.12.2026–10.01.2027"
+      ],
+      "note": "Частичный ежедневный поиск. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
+    }
+  ],
   "monitorRuns": [
     {
       "id": "monitor-20260905-025325-diagnostic",
@@ -61,6 +73,18 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-05T08:57:40+03:00",
       "note": "Живая выдача доступна. Сохранены вариант с одной пересадкой и прямой вариант; остальные аэропорты и даты в этой ручной проверке не охвачены."
+    },
+    {
+      "id": "monitor-20260905-065600-partial",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→BKK / BKK→KZN; вылет 20.12.2026; обратный вылет 09.01.2027; три варианта с багажом",
+        "MOW→BKK / BKK→MOW; вылет 19.12.2026; обратный вылет 09.01.2027; вариант с пересадкой и прямой",
+        "MOW→BKK / BKK→MOW; вылет 20.12.2026; обратный вылет 10.01.2027; оптимальный вариант с багажом"
+      ],
+      "nextScheduledAt": "2026-09-05T12:56:00+03:00",
+      "note": "Публичная выдача доступна. Проверены три новые комбинации дат для BKK; HKT, NBC, open-jaw и остальные сочетания дат в этом запуске не охвачены. Цены с багажом сохранены, длительность пересадок источником не раскрыта."
     }
   ],
   "checks": [
@@ -971,6 +995,302 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Прямой рейс в обе стороны. Цена за двоих с багажом показана в выдаче. Возвращение из Москвы в Набережные Челны 9 января пока не подтверждено."
+    },
+    {
+      "id": "20260905-065600-kzn-bkk-20-09-cheapest-bag",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 25.5833,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-20T23:55:00+03:00",
+        "arrivalAt": "2026-12-22T05:30:00+07:00",
+        "durationHours": 25.5833,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-09T06:30:00+07:00",
+        "arrivalAt": "2027-01-09T22:55:00+03:00",
+        "durationHours": 20.4167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 212430,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый увиденный вариант с багажом. Возвращение в Казань 9 января в 22:55; дорога до Набережных Челнов 10 января не подтверждена. Длительность пересадки источник не показал."
+    },
+    {
+      "id": "20260905-065600-kzn-bkk-20-09-optimal",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 19.4167,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-20T23:55:00+03:00",
+        "arrivalAt": "2026-12-21T17:05:00+07:00",
+        "durationHours": 13.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-09T06:30:00+07:00",
+        "arrivalAt": "2027-01-09T21:55:00+03:00",
+        "durationHours": 19.4167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 213201,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Оптимальный вариант выдачи с багажом. Возвращение в Казань 9 января в 21:55; фактическое прибытие домой 10 января не подтверждено. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260905-065600-kzn-bkk-20-09-fastest",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 14.5,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-20T23:55:00+03:00",
+        "arrivalAt": "2026-12-21T17:05:00+07:00",
+        "durationHours": 13.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-09T11:25:00+07:00",
+        "arrivalAt": "2027-01-09T21:55:00+03:00",
+        "durationHours": 14.5,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 260977,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый быстрый увиденный вариант с багажом. Возвращение в Казань 9 января в 21:55; фактическое прибытие домой 10 января не подтверждено. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260905-065600-mow-bkk-19-09-china-southern",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW",
+      "departureDate": "2026-12-19",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "China Southern Airlines",
+      "stops": 1,
+      "travelTimeHours": 15.3333,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-19T14:50:00+03:00",
+        "arrivalAt": "2026-12-20T10:10:00+07:00",
+        "durationHours": 15.3333,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "CAN",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→SVO",
+        "departureAt": "2027-01-09T02:10:00+07:00",
+        "arrivalAt": "2027-01-09T13:00:00+03:00",
+        "durationHours": 14.8333,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "CAN",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 265036,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1912BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Вариант с одной пересадкой и багажом. Возвращение в Москву 9 января в 13:00; дорога до Набережных Челнов 10 января не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260905-065600-mow-bkk-19-09-direct",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW · прямой",
+      "departureDate": "2026-12-19",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 0,
+      "travelTimeHours": 10.1667,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-19T19:15:00+03:00",
+        "arrivalAt": "2026-12-20T08:20:00+07:00",
+        "durationHours": 9.0833,
+        "stops": 0,
+        "layovers": []
+      },
+      "inbound": {
+        "route": "BKK→SVO",
+        "departureAt": "2027-01-09T10:15:00+07:00",
+        "arrivalAt": "2027-01-09T16:25:00+03:00",
+        "durationHours": 10.1667,
+        "stops": 0,
+        "layovers": []
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 462159,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1912BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Прямой рейс в обе стороны с багажом. Возвращение в Москву 9 января в 16:25; дорога до Набережных Челнов 10 января не подтверждена."
+    },
+    {
+      "id": "20260905-065600-mow-bkk-20-10-optimal",
+      "timestamp": "2026-09-05T06:56:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-10",
+      "homeArrivalDate": null,
+      "homeArrivalAt": null,
+      "airline": "China Eastern",
+      "stops": 1,
+      "travelTimeHours": 19.1667,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-20T16:45:00+03:00",
+        "arrivalAt": "2026-12-21T15:55:00+07:00",
+        "durationHours": 19.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "PVG",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→SVO",
+        "departureAt": "2027-01-10T01:05:00+07:00",
+        "arrivalAt": "2027-01-10T15:30:00+03:00",
+        "durationHours": 18.4167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "PKX",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 4 места по данным выдачи",
+      "totalPrice": 219530,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW2012BKK10012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Оптимальный вариант выдачи с багажом. Прилёт в Москву 10 января в 15:30 не подтверждает возвращение в Набережные Челны в допустимый срок. Длительность пересадок источник не показал."
     }
   ]
 };
