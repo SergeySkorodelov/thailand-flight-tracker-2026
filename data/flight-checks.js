@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-05T03:56:00.000Z",
+    "updatedAt": "2026-09-06T03:55:00.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -53,6 +53,16 @@ window.FLIGHT_TRACKER_DATA = {
         "MOW→BKK / BKK→MOW; 20.12.2026–10.01.2027"
       ],
       "note": "Частичный ежедневный поиск. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
+    },
+    {
+      "id": "discovery-20260906-065500-partial",
+      "timestamp": "2026-09-06T06:55:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→HKT / HKT→KZN; 20.12.2026–09.01.2027",
+        "NBC→HKT / HKT→NBC; 20.12.2026–09.01.2027"
+      ],
+      "note": "Частичный ежедневный поиск. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
     }
   ],
   "monitorRuns": [
@@ -85,6 +95,17 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-05T12:56:00+03:00",
       "note": "Публичная выдача доступна. Проверены три новые комбинации дат для BKK; HKT, NBC, open-jaw и остальные сочетания дат в этом запуске не охвачены. Цены с багажом сохранены, длительность пересадок источником не раскрыта."
+    },
+    {
+      "id": "monitor-20260906-065500-partial",
+      "timestamp": "2026-09-06T06:55:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→HKT / HKT→KZN; вылет 20.12.2026; обратный вылет 09.01.2027; дешёвый, быстрый и вариант S7 с багажом",
+        "NBC→HKT / HKT→NBC; вылет 20.12.2026; обратный вылет 09.01.2027; выдача просмотрена, но итоговые цены с зарегистрированным багажом отсутствовали"
+      ],
+      "nextScheduledAt": "2026-09-06T12:55:00+03:00",
+      "note": "Публичная выдача доступна после повторной попытки. Проверены две новые комбинации HKT. Для NBC фильтр багажа был недоступен, поэтому неподтверждённые цены без багажа не сохранялись. Остальные маршруты и даты в этом запуске не охвачены."
     }
   ],
   "checks": [
@@ -1291,6 +1312,163 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Оптимальный вариант выдачи с багажом. Прилёт в Москву 10 января в 15:30 не подтверждает возвращение в Набережные Челны в допустимый срок. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-065500-kzn-hkt-20-09-cheapest-bag",
+      "timestamp": "2026-09-06T06:55:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→HKT / HKT→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": null,
+      "homeArrivalAt": null,
+      "airline": "Air Arabia + Thai AirAsia",
+      "stops": 2,
+      "travelTimeHours": 30.3333,
+      "outbound": {
+        "route": "KZN→HKT",
+        "departureAt": "2026-12-20T23:55:00+03:00",
+        "arrivalAt": "2026-12-22T10:15:00+07:00",
+        "durationHours": 30.3333,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→KZN",
+        "departureAt": "2027-01-09T23:10:00+07:00",
+        "arrivalAt": "2027-01-10T22:55:00+03:00",
+        "durationHours": 27.75,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "DMK–BKK",
+            "durationHours": null
+          },
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "15 кг — 2 места по данным выдачи",
+      "totalPrice": 206857,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012HKT09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый увиденный вариант с багажом. Прилёт в Казань 10 января в 22:55 не подтверждает возвращение в Набережные Челны в допустимый срок. Обратно две пересадки, включая смену аэропорта DMK–BKK; длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-065500-kzn-hkt-20-09-fastest",
+      "timestamp": "2026-09-06T06:55:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→HKT / HKT→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia + Etihad Airways",
+      "stops": 1,
+      "travelTimeHours": 13.9167,
+      "outbound": {
+        "route": "KZN→HKT",
+        "departureAt": "2026-12-20T23:55:00+03:00",
+        "arrivalAt": "2026-12-21T17:20:00+07:00",
+        "durationHours": 13.4167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→KZN",
+        "departureAt": "2027-01-09T02:40:00+07:00",
+        "arrivalAt": "2027-01-09T12:35:00+03:00",
+        "durationHours": 13.9167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "AUH",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 307783,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012HKT09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый быстрый увиденный вариант с багажом. Прилёт в Казань 9 января в 12:35; последующая дорога до Набережных Челнов не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-065500-kzn-hkt-20-09-s7",
+      "timestamp": "2026-09-06T06:55:00+03:00",
+      "origin": "KZN",
+      "route": "KZN→HKT / HKT→KZN",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "S7 Airlines",
+      "stops": 1,
+      "travelTimeHours": 22.9167,
+      "outbound": {
+        "route": "KZN→HKT",
+        "departureAt": "2026-12-20T21:30:00+03:00",
+        "arrivalAt": "2026-12-21T16:40:00+07:00",
+        "durationHours": 15.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "OVB",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→KZN",
+        "departureAt": "2027-01-09T18:30:00+07:00",
+        "arrivalAt": "2027-01-10T13:25:00+03:00",
+        "durationHours": 22.9167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "OVB",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 369796,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN2012HKT09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Вариант S7 с багажом и одной пересадкой в каждом плече. Прилёт в Казань 10 января в 13:25; последующая дорога до Набережных Челнов не подтверждена. Длительность пересадок источник не показал."
     }
   ]
 };
