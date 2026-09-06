@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-06T09:55:00.000Z",
+    "updatedAt": "2026-09-06T15:57:00.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -72,6 +72,16 @@ window.FLIGHT_TRACKER_DATA = {
         "MOW→HKT / HKT→MOW; 18.12.2026–08.01.2027"
       ],
       "note": "Продолжение частичного ежедневного поиска. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
+    },
+    {
+      "id": "discovery-20260906-185700-partial",
+      "timestamp": "2026-09-06T18:57:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "NBC→BKK / BKK→NBC; 20.12.2026–09.01.2027",
+        "NBC→BKK / BKK→NBC; 19.12.2026–08.01.2027"
+      ],
+      "note": "Продолжение частичного ежедневного поиска. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
     }
   ],
   "monitorRuns": [
@@ -125,6 +135,17 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-06T18:55:00+03:00",
       "note": "Публичная выдача доступна. Проверена новая комбинация Москва–Пхукет, включая прямой рейс и более долгий дешёвый вариант до 70 часов. Остальные аэропорты, даты и open-jaw в этом запуске не охвачены; длительность пересадок источник не раскрывает."
+    },
+    {
+      "id": "monitor-20260906-185700-partial",
+      "timestamp": "2026-09-06T18:57:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "NBC→BKK / BKK→NBC; вылет 20.12.2026; обратный вылет 09.01.2027; быстрый вариант с багажом",
+        "NBC→BKK / BKK→NBC; вылет 19.12.2026; обратный вылет 08.01.2027; выдача просмотрена, но итоговые цены с зарегистрированным багажом отсутствовали"
+      ],
+      "nextScheduledAt": "2026-09-07T00:57:00+03:00",
+      "note": "Публичная выдача доступна. Для 20–9 января сохранён единственный увиденный вариант с подтверждённым багажом; для 19–8 января багаж в выдаче отсутствовал, поэтому цены не сохранялись. Остальные даты, HKT и open-jaw в этом запуске не охвачены."
     }
   ],
   "checks": [
@@ -1690,6 +1711,57 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Быстрый вариант с одной пересадкой и багажом. Прилёт в Москву 9 января в 07:45; дорога до Набережных Челнов в тот же день не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-185700-nbc-bkk-20-09-aeroflot",
+      "timestamp": "2026-09-06T18:57:00+03:00",
+      "origin": "NBC",
+      "route": "NBC→BKK / BKK→NBC",
+      "departureDate": "2026-12-20",
+      "returnDate": "2027-01-09",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 1,
+      "travelTimeHours": 13.9167,
+      "outbound": {
+        "route": "NBC→BKK",
+        "departureAt": "2026-12-20T17:40:00+03:00",
+        "arrivalAt": "2026-12-21T10:40:00+07:00",
+        "durationHours": 13,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SVO",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→NBC",
+        "departureAt": "2027-01-09T10:15:00+07:00",
+        "arrivalAt": "2027-01-09T20:10:00+03:00",
+        "durationHours": 13.9167,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SVO",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 495939,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/NBC2012BKK09012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый быстрый вариант выдачи с багажом. Прилёт в Бегишево 9 января в 20:10; дорога от аэропорта до дома не подтверждена. Длительность пересадок источник не показал."
     }
   ]
 };
