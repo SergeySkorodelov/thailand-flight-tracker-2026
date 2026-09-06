@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-06T03:55:00.000Z",
+    "updatedAt": "2026-09-06T09:55:00.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -63,6 +63,15 @@ window.FLIGHT_TRACKER_DATA = {
         "NBC→HKT / HKT→NBC; 20.12.2026–09.01.2027"
       ],
       "note": "Частичный ежедневный поиск. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
+    },
+    {
+      "id": "discovery-20260906-125500-partial",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "MOW→HKT / HKT→MOW; 18.12.2026–08.01.2027"
+      ],
+      "note": "Продолжение частичного ежедневного поиска. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
     }
   ],
   "monitorRuns": [
@@ -106,6 +115,16 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-06T12:55:00+03:00",
       "note": "Публичная выдача доступна после повторной попытки. Проверены две новые комбинации HKT. Для NBC фильтр багажа был недоступен, поэтому неподтверждённые цены без багажа не сохранялись. Остальные маршруты и даты в этом запуске не охвачены."
+    },
+    {
+      "id": "monitor-20260906-125500-partial",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "status": "partial",
+      "coverage": [
+        "MOW→HKT / HKT→MOW; вылет 18.12.2026; обратный вылет 08.01.2027; оптимальный, дешёвый с багажом, прямой и быстрый вариант с пересадкой"
+      ],
+      "nextScheduledAt": "2026-09-06T18:55:00+03:00",
+      "note": "Публичная выдача доступна. Проверена новая комбинация Москва–Пхукет, включая прямой рейс и более долгий дешёвый вариант до 70 часов. Остальные аэропорты, даты и open-jaw в этом запуске не охвачены; длительность пересадок источник не раскрывает."
     }
   ],
   "checks": [
@@ -1469,6 +1488,208 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Вариант S7 с багажом и одной пересадкой в каждом плече. Прилёт в Казань 10 января в 13:25; последующая дорога до Набережных Челнов не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-125500-mow-hkt-18-08-optimal",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→HKT / HKT→MOW",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "China Eastern + Shanghai Airlines",
+      "stops": 1,
+      "travelTimeHours": 18.25,
+      "outbound": {
+        "route": "SVO→HKT",
+        "departureAt": "2026-12-18T16:45:00+03:00",
+        "arrivalAt": "2026-12-19T14:30:00+07:00",
+        "durationHours": 17.75,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "PVG",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→SVO",
+        "departureAt": "2027-01-08T00:20:00+07:00",
+        "arrivalAt": "2027-01-08T14:35:00+03:00",
+        "durationHours": 18.25,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "PVG",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 4 места по данным выдачи",
+      "totalPrice": 259648,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812HKT08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Оптимальный вариант выдачи с багажом. Прилёт в Москву 8 января в 14:35; дорога до Набережных Челнов 9 января не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-125500-mow-hkt-18-08-cheapest-bag",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→HKT / HKT→MOW",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia + Thai AirAsia / AirAsia + Batik Air Malaysia + Uzbekistan Airways",
+      "stops": 2,
+      "travelTimeHours": 26.3333,
+      "outbound": {
+        "route": "DME→HKT",
+        "departureAt": "2026-12-18T03:15:00+03:00",
+        "arrivalAt": "2026-12-19T09:30:00+07:00",
+        "durationHours": 26.25,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          },
+          {
+            "airport": "BKK",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→DME",
+        "departureAt": "2027-01-08T11:30:00+07:00",
+        "arrivalAt": "2027-01-09T09:50:00+03:00",
+        "durationHours": 26.3333,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "KUL",
+            "durationHours": null
+          },
+          {
+            "airport": "TAS",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "10 кг — 2 места по данным выдачи",
+      "totalPrice": 259497,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812HKT08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый увиденный вариант с багажом. Прилёт в Москву 9 января в 09:50; дорога до Набережных Челнов 10 января не подтверждена. По две пересадки в каждом плече; длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260906-125500-mow-hkt-18-08-direct",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→HKT / HKT→MOW · прямой",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 0,
+      "travelTimeHours": 10.25,
+      "outbound": {
+        "route": "SVO→HKT",
+        "departureAt": "2026-12-18T18:35:00+03:00",
+        "arrivalAt": "2026-12-19T08:00:00+07:00",
+        "durationHours": 9.4167,
+        "stops": 0,
+        "layovers": []
+      },
+      "inbound": {
+        "route": "HKT→SVO",
+        "departureAt": "2027-01-08T12:10:00+07:00",
+        "arrivalAt": "2027-01-08T18:25:00+03:00",
+        "durationHours": 10.25,
+        "stops": 0,
+        "layovers": []
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 575999,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812HKT08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Прямой рейс в обе стороны с багажом. Прилёт в Москву 8 января в 18:25; дорога до Набережных Челнов 9 января не подтверждена."
+    },
+    {
+      "id": "20260906-125500-mow-hkt-18-08-etihad",
+      "timestamp": "2026-09-06T12:55:00+03:00",
+      "origin": "MOW",
+      "route": "MOW→HKT / HKT→MOW",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Etihad Airways",
+      "stops": 1,
+      "travelTimeHours": 14.75,
+      "outbound": {
+        "route": "SVO→HKT",
+        "departureAt": "2026-12-18T12:35:00+03:00",
+        "arrivalAt": "2026-12-19T06:50:00+07:00",
+        "durationHours": 14.25,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "AUH",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "HKT→SVO",
+        "departureAt": "2027-01-08T21:00:00+07:00",
+        "arrivalAt": "2027-01-09T07:45:00+03:00",
+        "durationHours": 14.75,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "AUH",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "25 кг — 2 места по данным выдачи",
+      "totalPrice": 336905,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812HKT08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Быстрый вариант с одной пересадкой и багажом. Прилёт в Москву 9 января в 07:45; дорога до Набережных Челнов в тот же день не подтверждена. Длительность пересадок источник не показал."
     }
   ]
 };

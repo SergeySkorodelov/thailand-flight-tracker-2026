@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-06T03:56:01.156Z",
-  "sourceUpdatedAt": "2026-09-06T03:55:00.000Z",
-  "latestCheckAt": "2026-09-06T06:55:00+03:00",
+  "generatedAt": "2026-09-06T09:56:25.440Z",
+  "sourceUpdatedAt": "2026-09-06T09:55:00.000Z",
+  "latestCheckAt": "2026-09-06T12:55:00+03:00",
   "scope": {
     "departureDates": [
       "2026-12-18",
@@ -37,67 +37,72 @@
     "label": "ДОРОГО",
     "urgent": false,
     "notify": false,
-    "observedAt": "2026-09-06T06:55:00+03:00",
-    "expiresAt": "2026-09-06T09:55:00.000Z",
+    "observedAt": "2026-09-06T12:55:00+03:00",
+    "expiresAt": "2026-09-06T15:55:00.000Z",
     "missingChecks": [
       "возвращение домой",
       "обязательные сборы",
       "оплата российской картой",
+      "дорога из/до Москвы",
       "длительность и пересадки"
     ],
-    "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой, длительность и пересадки",
-    "route": "KZN→HKT / HKT→KZN",
-    "departureDate": "2026-12-20",
-    "returnDate": "2027-01-09",
-    "homeArrivalDate": null,
+    "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой, дорога из/до Москвы, длительность и пересадки",
+    "route": "MOW→HKT / HKT→MOW",
+    "departureDate": "2026-12-18",
+    "returnDate": "2027-01-08",
+    "homeArrivalDate": "2027-01-10",
     "homeArrivalAt": null,
     "outbound": {
-      "route": "KZN→HKT",
-      "departureAt": "2026-12-20T23:55:00+03:00",
-      "arrivalAt": "2026-12-22T10:15:00+07:00",
-      "durationHours": 30.3333,
-      "stops": 1,
+      "route": "DME→HKT",
+      "departureAt": "2026-12-18T03:15:00+03:00",
+      "arrivalAt": "2026-12-19T09:30:00+07:00",
+      "durationHours": 26.25,
+      "stops": 2,
       "layovers": [
         {
           "airport": "SHJ",
+          "durationHours": null
+        },
+        {
+          "airport": "BKK",
           "durationHours": null
         }
       ]
     },
     "inbound": {
-      "route": "HKT→KZN",
-      "departureAt": "2027-01-09T23:10:00+07:00",
-      "arrivalAt": "2027-01-10T22:55:00+03:00",
-      "durationHours": 27.75,
+      "route": "HKT→DME",
+      "departureAt": "2027-01-08T11:30:00+07:00",
+      "arrivalAt": "2027-01-09T09:50:00+03:00",
+      "durationHours": 26.3333,
       "stops": 2,
       "layovers": [
         {
-          "airport": "DMK–BKK",
+          "airport": "KUL",
           "durationHours": null
         },
         {
-          "airport": "SHJ",
+          "airport": "TAS",
           "durationHours": null
         }
       ]
     },
-    "airline": "Air Arabia + Thai AirAsia",
+    "airline": "Air Arabia + Thai AirAsia / AirAsia + Batik Air Malaysia + Uzbekistan Airways",
     "stops": 2,
-    "travelTimeHours": 30.3333,
-    "baggage": "15 кг — 2 места по данным выдачи",
-    "totalPrice": 206857,
-    "pricePerPerson": 103429,
+    "travelTimeHours": 26.3333,
+    "baggage": "10 кг — 2 места по данным выдачи",
+    "totalPrice": 259497,
+    "pricePerPerson": 129749,
     "payment": "Цена в ₽; российскую карту уточнить у продавца",
-    "source": "https://www.aviasales.ru/search/KZN2012HKT09012",
+    "source": "https://www.aviasales.ru/search/MOW1812HKT08012",
     "sourceType": "search"
   },
   "monitor": {
-    "lastAttemptAt": "2026-09-06T06:55:00+03:00",
+    "lastAttemptAt": "2026-09-06T12:55:00+03:00",
     "lastAttemptStatus": "partial",
-    "lastAttemptNote": "Публичная выдача доступна после повторной попытки. Проверены две новые комбинации HKT. Для NBC фильтр багажа был недоступен, поэтому неподтверждённые цены без багажа не сохранялись. Остальные маршруты и даты в этом запуске не охвачены.",
+    "lastAttemptNote": "Публичная выдача доступна. Проверена новая комбинация Москва–Пхукет, включая прямой рейс и более долгий дешёвый вариант до 70 часов. Остальные аэропорты, даты и open-jaw в этом запуске не охвачены; длительность пересадок источник не раскрывает.",
     "lastAttemptError": null,
-    "lastSuccessfulCheckAt": "2026-09-06T06:55:00+03:00",
-    "nextScheduledAt": "2026-09-06T12:55:00+03:00"
+    "lastSuccessfulCheckAt": "2026-09-06T12:55:00+03:00",
+    "nextScheduledAt": "2026-09-06T18:55:00+03:00"
   },
   "alerts": []
 }
