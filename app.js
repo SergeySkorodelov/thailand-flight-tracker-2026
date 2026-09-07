@@ -541,8 +541,30 @@ function discoverySchedule() {
   const runs = state.discoveryRuns.filter((run) => Number.isFinite(Date.parse(run.timestamp))).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
   const lastRun = runs[0] || null;
   const completed = runs.find((run) => run.status === "completed") || null;
-  const nextAt = lastRun ? Date.parse(lastRun.timestamp) + 24 * 3600000 : null;
+  const nextAt = nextSaturdayAt3Moscow();
   return { lastRun, completed, nextAt };
+}
+
+function nextSaturdayAt3Moscow(reference = Date.now()) {
+  const moscowOffset = 3 * 3600000;
+  const moscowNow = new Date(reference + moscowOffset);
+  let daysAhead = (6 - moscowNow.getUTCDay() + 7) % 7;
+  let candidate = Date.UTC(
+    moscowNow.getUTCFullYear(),
+    moscowNow.getUTCMonth(),
+    moscowNow.getUTCDate() + daysAhead,
+    0, 0, 0
+  );
+  if (candidate <= reference) {
+    daysAhead += 7;
+    candidate = Date.UTC(
+      moscowNow.getUTCFullYear(),
+      moscowNow.getUTCMonth(),
+      moscowNow.getUTCDate() + daysAhead,
+      0, 0, 0
+    );
+  }
+  return candidate;
 }
 
 function renderSchedules() {
@@ -551,7 +573,7 @@ function renderSchedules() {
   const priceStatus = price.lastRun ? monitorRunLabel(price.lastRun.status) : "ещё не запускалась";
   const discoveryStatus = discovery.lastRun ? monitorRunLabel(discovery.lastRun.status) : "ещё не запускалась";
   els.priceSchedule.innerHTML = `<div class="schedule-card__head"><span class="schedule-card__icon" aria-hidden="true">₽</span><div><p class="eyebrow">Стоимость билетов</p><h2>Проверка каждые 6 часов</h2></div></div><dl class="schedule-card__facts"><div><dt>Последняя попытка</dt><dd>${price.lastRun ? `${escapeHtml(formatDateTime(price.lastRun.timestamp))} · ${escapeHtml(priceStatus)}` : "Ещё не выполнялась"}</dd></div><div><dt>Последняя полученная цена</dt><dd>${price.latestPrice ? escapeHtml(formatDateTime(price.latestPrice)) : "Цен пока нет"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(formatScheduleTime(price.nextAt))}</dd></div></dl>`;
-  els.discoverySchedule.innerHTML = `<div class="schedule-card__head"><span class="schedule-card__icon" aria-hidden="true">✈</span><div><p class="eyebrow">Новые и исчезнувшие рейсы</p><h2>Расширенный поиск раз в день</h2></div></div><dl class="schedule-card__facts"><div><dt>Последняя попытка</dt><dd>${discovery.lastRun ? `${escapeHtml(formatDateTime(discovery.lastRun.timestamp))} · ${escapeHtml(discoveryStatus)}` : "Ещё не выполнялась"}</dd></div><div><dt>Последняя полная проверка</dt><dd>${discovery.completed ? escapeHtml(formatDateTime(discovery.completed.timestamp)) : "Полного охвата ещё не было"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(formatScheduleTime(discovery.nextAt))}</dd></div></dl>`;
+  els.discoverySchedule.innerHTML = `<div class="schedule-card__head"><span class="schedule-card__icon" aria-hidden="true">✈</span><div><p class="eyebrow">Новые и исчезнувшие рейсы</p><h2>Расширенный поиск по субботам в 03:00</h2></div></div><dl class="schedule-card__facts"><div><dt>Последняя попытка</dt><dd>${discovery.lastRun ? `${escapeHtml(formatDateTime(discovery.lastRun.timestamp))} · ${escapeHtml(discoveryStatus)}` : "Ещё не выполнялась"}</dd></div><div><dt>Последняя полная проверка</dt><dd>${discovery.completed ? escapeHtml(formatDateTime(discovery.completed.timestamp)) : "Полного охвата ещё не было"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(formatScheduleTime(discovery.nextAt))}</dd></div></dl>`;
 }
 
 function formatScheduleTime(value) {
@@ -1237,7 +1259,7 @@ function renderDiscovery() {
     ? `Последняя попытка завершилась со статусом «${monitorRunLabel(schedule.lastRun.status)}», поэтому полный список мог быть получен не полностью.`
     : "";
   const nextNote = `Следующая проверка: ${formatScheduleTime(schedule.nextAt)}.`;
-  els.discoveryEvents.innerHTML = `<p class="scope-note">${latest ? "Счётчики охватывают накопленную историю полных проверок. Ноль означает, что изменений не найдено. Отмена или распродажа учитываются только после подтверждения источником." : "Полная ежедневная проверка ещё не завершалась, поэтому количество новых и исчезнувших рейсов пока неизвестно."} ${escapeHtml(runNote)} ${escapeHtml(nextNote)}</p>`
+  els.discoveryEvents.innerHTML = `<p class="scope-note">${latest ? "Счётчики охватывают накопленную историю полных проверок. Ноль означает, что изменений не найдено. Отмена или распродажа учитываются только после подтверждения источником." : "Полная еженедельная проверка ещё не завершалась, поэтому количество новых и исчезнувших рейсов пока неизвестно."} ${escapeHtml(runNote)} ${escapeHtml(nextNote)}</p>`
     + events.map((e) => `<article class="discovery-event"><div><strong>${escapeHtml(e.route)}</strong><p>${escapeHtml(e.kind === "cancelled" || e.kind === "sold_out" ? e.confirmed === true ? labels[e.kind] : "Статус не подтверждён" : labels[e.kind] || "Изменение")} · ${formatDateTime(e.timestamp)}</p>${ticketLegsMarkup(e, true)}<p class="home-status">${escapeHtml(homeStatus(e))}</p>${e.note ? `<p>${escapeHtml(e.note)}</p>` : ""}</div>${offerLink(e)}</article>`).join("");
 }
 
