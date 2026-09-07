@@ -20,6 +20,7 @@ const state = {
   records: [],
   period: "7d",
   airports: new Set(DEFAULT_CONFIG.airports),
+  fareModes: new Set(["with_baggage", "without_baggage"]),
   maxTravelHours: 70,
   route: "all",
   journalSearch: "",
@@ -55,12 +56,12 @@ function registerServiceWorker() {
 function cacheElements() {
   const ids = [
     "theme-toggle", "theme-label", "freshness", "json-file", "reload-data",
-    "period-filter", "airport-filter", "duration-filter", "route-filter", "reset-filters", "mobile-filter-toggle", "filters-body",
+    "period-filter", "airport-filter", "fare-filter", "duration-filter", "route-filter", "reset-filters", "mobile-filter-toggle", "filters-body",
     "kpi-current", "kpi-current-note", "kpi-current-link", "kpi-route", "kpi-route-note", "kpi-route-link", "kpi-seven-link", "scope-note", "selected-airports",
-    "discovery-counts", "discovery-events", "discovery-updated",
+    "discovery-counts", "discovery-events", "discovery-updated", "price-schedule", "discovery-schedule",
     "kpi-seven", "kpi-seven-note", "kpi-signal", "kpi-signal-note", "signal-card",
-    "trend-chart", "trend-tooltip", "trend-empty", "trend-summary", "airport-chart", "airport-tooltip", "airport-empty",
-    "route-summary", "route-count", "journal-search", "journal-body", "journal-empty",
+    "trend-chart", "trend-tooltip", "trend-empty", "trend-summary", "trend-price-legend", "threshold-legend", "airport-chart", "airport-tooltip", "airport-empty", "airport-current-legend", "airport-min-legend",
+    "route-summary", "route-count", "journal-search",
     "journal-cards", "journal-more", "row-count", "export-csv", "data-source-label",
   ];
   ids.forEach((id) => { els[toCamel(id)] = document.getElementById(id); });
@@ -114,6 +115,16 @@ function bindEvents() {
     render();
   });
 
+  els.fareFilter.addEventListener("change", (event) => {
+    const checkbox = event.target.closest("input[data-fare-mode]");
+    if (!checkbox) return;
+    const mode = checkbox.dataset.fareMode;
+    if (checkbox.checked) state.fareModes.add(mode);
+    else state.fareModes.delete(mode);
+    state.mobileRowsLimit = 20;
+    render();
+  });
+
   els.routeFilter.addEventListener("change", () => {
     state.route = els.routeFilter.value;
     render();
@@ -129,6 +140,7 @@ function bindEvents() {
     state.period = "7d";
     state.route = "all";
     state.airports = new Set(state.config.airports);
+    state.fareModes = new Set(["with_baggage", "without_baggage"]);
     state.maxTravelHours = 70;
     els.journalSearch.value = "";
     state.journalSearch = "";
@@ -136,6 +148,7 @@ function bindEvents() {
     [...els.periodFilter.querySelectorAll("button")].forEach((button) => button.classList.toggle("is-active", button.dataset.period === "7d"));
     els.routeFilter.value = "all";
     els.durationFilter.value = "70";
+    [...els.fareFilter.querySelectorAll("input[data-fare-mode]")].forEach((input) => { input.checked = true; });
     renderAirportFilters();
     render();
   });
@@ -250,6 +263,7 @@ function applyData(data, sourceLabel) {
   state.discoveryRuns = Array.isArray(data.discoveryRuns) ? data.discoveryRuns : [];
   state.monitorRuns = Array.isArray(data.monitorRuns) ? data.monitorRuns : [];
   state.airports = new Set(state.config.airports);
+  state.fareModes = new Set(["with_baggage", "without_baggage"]);
   state.maxTravelHours = 70;
   els.durationFilter.value = "70";
   state.route = "all";
@@ -297,6 +311,7 @@ function normalizeRecord(raw, index, config) {
   const returnDate = String(raw.returnDate || "");
   const airline = String(raw.airline || "Не указана").trim();
   const routeParts = route.split(/\s*\/\s*/);
+  const fareOptions = normalizeFareOptions(raw, totalPrice, basePrice);
   return {
     ...raw,
     id: raw.id || `check-${index + 1}`,
@@ -331,6 +346,7 @@ function normalizeRecord(raw, index, config) {
     baggage: String(raw.baggage || "Не проверено"),
     basePrice: Number.isFinite(basePrice) && basePrice > 0 ? basePrice : null,
     basePriceNote: String(raw.basePriceNote || "Без зарегистрированного багажа"),
+    fareOptions,
     totalPrice,
     payment: String(raw.payment || "Не проверено"),
     source: String(raw.source || ""),
@@ -339,6 +355,45 @@ function normalizeRecord(raw, index, config) {
     tripKey: `${route}|${departureDate}|${returnDate}`,
     config,
   };
+}
+
+function normalizeFareOptions(raw, totalPrice, basePrice) {
+  const explicit = Array.isArray(raw.fareOptions) ? raw.fareOptions.map((fare, index) => {
+    const price = Number(fare?.price);
+    if (!Number.isFinite(price) || price <= 0) return null;
+    const kind = fare.kind === "without_baggage" ? "without_baggage" : "with_baggage";
+    return {
+      id: String(fare.id || `${kind}-${index + 1}`),
+      kind,
+      label: String(fare.label || (kind === "with_baggage" ? "С багажом" : "Без багажа")),
+      price,
+      checkedBaggage: String(fare.checkedBaggage || (kind === "with_baggage" ? raw.baggage || "Вес не указан" : "Нет")),
+      carryOn: String(fare.carryOn || "Вес не указан"),
+      note: String(fare.note || ""),
+    };
+  }).filter(Boolean) : [];
+  if (explicit.length) return explicit.sort((a, b) => a.price - b.price);
+
+  const derived = [];
+  if (Number.isFinite(basePrice) && basePrice > 0) derived.push({
+    id: "without-baggage",
+    kind: "without_baggage",
+    label: "Без багажа",
+    price: basePrice,
+    checkedBaggage: "Нет",
+    carryOn: String(raw.carryOn || raw.carryOnAllowance || "Вес не указан"),
+    note: String(raw.basePriceNote || ""),
+  });
+  derived.push({
+    id: "with-baggage",
+    kind: "with_baggage",
+    label: "С багажом",
+    price: totalPrice,
+    checkedBaggage: String(raw.baggage || "Вес не указан"),
+    carryOn: String(raw.carryOn || raw.carryOnAllowance || "Вес не указан"),
+    note: "",
+  });
+  return derived;
 }
 
 function normalizeLeg(rawLeg, fallback) {
@@ -381,7 +436,7 @@ function getStatus(recordOrPrice, config) {
 }
 
 function buildRouteOptions() {
-  const routes = [...new Set(state.records.filter((r) => state.airports.has(r.origin) && FlightRules.eligibility(r) !== "excluded" && isWithinDuration(r)).map((record) => record.route).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
+  const routes = [...new Set(state.records.filter((r) => state.airports.has(r.origin) && FlightRules.eligibility(r) !== "excluded" && isWithinDuration(r) && visibleFareOptions(r).length).map((record) => record.route).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
   if (!routes.includes(state.route)) state.route = "all";
   els.routeFilter.innerHTML = `<option value="all">Все маршруты</option>${routes.map((route) => `<option value="${escapeHtml(route)}">${escapeHtml(route)}</option>`).join("")}`;
   els.routeFilter.value = state.route;
@@ -395,10 +450,13 @@ function render() {
   scoped.forEach((r) => { r.bestFlag = r.totalPrice === bestAt.get(r.timestamp); r.status = getStatus(r, state.config); });
   setText(els.selectedAirports, [...state.airports].join(" · ") || "Не выбраны");
   setText(els.scopeNote, !state.airports.size ? "Выберите хотя бы один аэропорт, чтобы увидеть результаты."
+    : !state.fareModes.size ? "Выберите хотя бы один тип тарифа: с багажом или без багажа."
     : scoped.some((r) => FlightRules.eligibility(r) === "pending") ? `Показаны варианты до ${state.maxTravelHours} ч. В истории есть цены без подтверждённого возвращения домой — это не рекомендация к покупке.`
-    : `Все показатели ниже учитывают выбранные аэропорты и перелёты до ${state.maxTravelHours} ч. Обратно — дата, когда вы уже дома.`);
+    : `Показаны выбранные аэропорты, тарифы и перелёты до ${state.maxTravelHours} ч. Для каждого рейса перечислены все найденные варианты багажа и ручной клади.`);
   const visible = applyPeriod(scoped);
   renderFreshness();
+  renderSchedules();
+  renderFareLegends();
   renderKpis(scoped);
   renderRouteSummary(visible);
   renderJournal(visible);
@@ -407,7 +465,7 @@ function render() {
 }
 
 function getScopedRecords() {
-  return state.records.filter((record) => FlightRules.eligibility(record) !== "excluded" && state.airports.has(record.origin) && isWithinDuration(record) && (state.route === "all" || record.route === state.route));
+  return state.records.filter((record) => FlightRules.eligibility(record) !== "excluded" && state.airports.has(record.origin) && isWithinDuration(record) && visibleFareOptions(record).length && (state.route === "all" || record.route === state.route));
 }
 
 function isWithinDuration(record) {
@@ -437,7 +495,48 @@ function renderFreshness() {
   }
   const ageHours = Math.max(0, (Date.now() - latest) / 3600000);
   els.freshness.classList.add(ageHours <= state.config.checkIntervalHours * 1.5 ? "is-fresh" : "is-stale");
-  els.freshness.querySelector("span:last-child").textContent = `Проверено ${formatRelative(latest)}`;
+  const next = priceSchedule().nextAt;
+  els.freshness.querySelector("span:last-child").textContent = `Цена: ${formatDateTime(latest)} · следующая ${formatScheduleTime(next)}`;
+}
+
+function renderFareLegends() {
+  const withBag = state.fareModes.has("with_baggage");
+  const withoutBag = state.fareModes.has("without_baggage");
+  const label = withBag && withoutBag ? "Лучшая из выбранных тарифов" : withBag ? "Цена с багажом" : withoutBag ? "Цена без багажа" : "Тариф не выбран";
+  setText(els.trendPriceLegend, label);
+  setText(els.airportCurrentLegend, `Текущая · ${label.toLocaleLowerCase("ru")}`);
+  setText(els.airportMinLegend, `Мин. 7 дней · ${label.toLocaleLowerCase("ru")}`);
+  els.thresholdLegend.hidden = !(withBag && !withoutBag);
+}
+
+function priceSchedule() {
+  const runs = state.monitorRuns.filter((run) => Number.isFinite(Date.parse(run.timestamp))).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+  const lastRun = runs[0] || null;
+  const latestPrice = state.records.length ? Math.max(...state.records.map((record) => record.timestampMs)) : null;
+  const nextAt = lastRun?.nextScheduledAt ? Date.parse(lastRun.nextScheduledAt) : lastRun ? Date.parse(lastRun.timestamp) + state.config.checkIntervalHours * 3600000 : latestPrice ? latestPrice + state.config.checkIntervalHours * 3600000 : null;
+  return { lastRun, latestPrice, nextAt };
+}
+
+function discoverySchedule() {
+  const runs = state.discoveryRuns.filter((run) => Number.isFinite(Date.parse(run.timestamp))).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
+  const lastRun = runs[0] || null;
+  const completed = runs.find((run) => run.status === "completed") || null;
+  const nextAt = lastRun ? Date.parse(lastRun.timestamp) + 24 * 3600000 : null;
+  return { lastRun, completed, nextAt };
+}
+
+function renderSchedules() {
+  const price = priceSchedule();
+  const discovery = discoverySchedule();
+  const priceStatus = price.lastRun ? monitorRunLabel(price.lastRun.status) : "ещё не запускалась";
+  const discoveryStatus = discovery.lastRun ? monitorRunLabel(discovery.lastRun.status) : "ещё не запускалась";
+  els.priceSchedule.innerHTML = `<div class="schedule-card__head"><span class="schedule-card__icon" aria-hidden="true">₽</span><div><p class="eyebrow">Стоимость билетов</p><h2>Проверка каждые 6 часов</h2></div></div><dl class="schedule-card__facts"><div><dt>Последняя попытка</dt><dd>${price.lastRun ? `${escapeHtml(formatDateTime(price.lastRun.timestamp))} · ${escapeHtml(priceStatus)}` : "Ещё не выполнялась"}</dd></div><div><dt>Последняя полученная цена</dt><dd>${price.latestPrice ? escapeHtml(formatDateTime(price.latestPrice)) : "Цен пока нет"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(formatScheduleTime(price.nextAt))}</dd></div></dl>`;
+  els.discoverySchedule.innerHTML = `<div class="schedule-card__head"><span class="schedule-card__icon" aria-hidden="true">✈</span><div><p class="eyebrow">Новые и исчезнувшие рейсы</p><h2>Расширенный поиск раз в день</h2></div></div><dl class="schedule-card__facts"><div><dt>Последняя попытка</dt><dd>${discovery.lastRun ? `${escapeHtml(formatDateTime(discovery.lastRun.timestamp))} · ${escapeHtml(discoveryStatus)}` : "Ещё не выполнялась"}</dd></div><div><dt>Последняя полная проверка</dt><dd>${discovery.completed ? escapeHtml(formatDateTime(discovery.completed.timestamp)) : "Полного охвата ещё не было"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(formatScheduleTime(discovery.nextAt))}</dd></div></dl>`;
+}
+
+function formatScheduleTime(value) {
+  if (!Number.isFinite(value)) return "Ещё не запланирована";
+  return value > Date.now() ? formatDateTime(value) : `${formatDateTime(value)} · срок прошёл, ожидается запуск`;
 }
 
 function renderKpis(records) {
@@ -472,7 +571,7 @@ function renderKpis(records) {
   els.kpiRouteNote.innerHTML = ticketDetailsMarkup(best, latestTimestamp);
   els.kpiRouteLink.innerHTML = offerLink(best);
   setText(els.kpiSeven, formatCurrency(minSeven));
-  els.kpiSevenNote.innerHTML = minSevenRecord ? ticketDetailsMarkup(minSevenRecord, minSevenRecord.timestampMs, minSeven === leadPrice(best) ? "Последняя базовая цена — минимум недели" : `Последняя базовая цена выше на ${formatCurrency(leadPrice(best) - minSeven)}`) : "За последние 7 дней проверок нет";
+  els.kpiSevenNote.innerHTML = minSevenRecord ? ticketDetailsMarkup(minSevenRecord, minSevenRecord.timestampMs, minSeven === leadPrice(best) ? "Текущая выбранная цена — минимум недели" : `Текущая выбранная цена выше на ${formatCurrency(leadPrice(best) - minSeven)}`) : "За последние 7 дней проверок нет";
   if (minSevenRecord) els.kpiSevenLink.innerHTML = offerLink(minSevenRecord);
   setText(els.kpiSignal, statusLabel(status));
   els.kpiSignalNote.innerHTML = monitorStatusMarkup(best, status);
@@ -488,7 +587,7 @@ function monitorStatusMarkup(record, status) {
   const nextText = Number.isFinite(nextAt) && nextAt > Date.now() ? formatDateTime(nextAt) : "срок прошёл — ожидается ближайший запуск";
   const runText = lastRun ? `${formatDateTime(lastRun.timestamp)} · ${monitorRunLabel(lastRun.status)}` : "попытки ещё не записывались";
   const error = lastRun && ["partial", "failed"].includes(lastRun.status) && (lastRun.error || lastRun.note) ? `<p class="monitor-error">Причина: ${escapeHtml(lastRun.error || lastRun.note)}</p>` : "";
-  return `<p class="signal-reason">${escapeHtml(reason)}</p><dl class="monitor-status"><div><dt>Последняя попытка</dt><dd>${escapeHtml(runText)}</dd></div><div><dt>Последняя цена</dt><dd>${lastSuccess ? escapeHtml(formatDateTime(lastSuccess)) : "нет"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(nextText)}</dd></div></dl>${error}`;
+  return `<p class="signal-basis">Сигнал всегда рассчитывается по полной цене с багажом, даже если выбран фильтр «без багажа».</p><p class="signal-reason">${escapeHtml(reason)}</p><dl class="monitor-status"><div><dt>Последняя попытка</dt><dd>${escapeHtml(runText)}</dd></div><div><dt>Последняя цена</dt><dd>${lastSuccess ? escapeHtml(formatDateTime(lastSuccess)) : "нет"}</dd></div><div><dt>Следующая проверка</dt><dd>${escapeHtml(nextText)}</dd></div></dl>${error}`;
 }
 
 function monitorRunLabel(status) {
@@ -514,9 +613,9 @@ function renderRouteSummary(records) {
   const summaries = [...groups.values()].map((items) => {
     const latest = Math.max(...items.map((item) => item.timestampMs));
     const current = items.filter((item) => item.timestampMs === latest).reduce((best, item) => !best || leadPrice(item) < leadPrice(best) ? item : best, null);
-    const min = Math.min(...items.map((item) => item.totalPrice));
+    const min = Math.min(...items.map((item) => leadPrice(item)));
     return { current, min, count: items.length };
-  }).sort((a, b) => a.current.totalPrice - b.current.totalPrice);
+  }).sort((a, b) => leadPrice(a.current) - leadPrice(b.current));
 
   els.routeCount.textContent = pluralize(summaries.length, ["маршрут", "маршрута", "маршрутов"]);
   if (!summaries.length) {
@@ -537,10 +636,10 @@ function renderRouteSummary(records) {
       <p class="home-status">${escapeHtml(homeStatus(current))}</p>
       <div class="route-card__metrics">
         <span>Сводка источника <b>${escapeHtml(journeySummary(current))}</b></span>
-        <span>Мин. с багажом <b>${formatCurrency(min)}</b></span>
+        <span>Минимум по фильтру <b>${formatCurrency(min)}</b></span>
         <span>Δ 24 часа <b class="${deltaClass(current.delta24h)}">${formatDelta(current.delta24h)}</b></span>
       </div>
-      <div class="offer-row">${offerLink(current)}<span>${escapeHtml(statusLabel(current.status))}</span></div>
+      <div class="offer-row">${offerLink(current)}${recordStatusMarkup(current)}</div>
     </article>
   `).join("");
 }
@@ -549,62 +648,42 @@ function renderJournal(records) {
   const query = state.journalSearch;
   const filtered = records.filter((record) => {
     if (!query) return true;
-    return [record.route, record.airline, record.origin, record.payment, record.baggage, record.departureDate, record.returnDate]
+    return [record.route, record.airline, record.origin, record.payment, record.baggage, record.departureDate, record.returnDate,
+      ...record.fareOptions.flatMap((fare) => [fare.label, fare.checkedBaggage, fare.carryOn])]
       .join(" ").toLocaleLowerCase("ru").includes(query);
   }).sort((a, b) => b.timestampMs - a.timestampMs);
 
-  els.journalBody.innerHTML = filtered.map((record) => `
-    <tr>
-      <td>${formatDateTime(record.timestampMs)}</td>
-      <td class="route-cell"><strong>${escapeHtml(record.route)}</strong>${ticketLegsMarkup(record, true)}<span>${escapeHtml(homeStatus(record))}</span></td>
-      <td>${escapeHtml(record.airline)}</td>
-      <td>${escapeHtml(formatStops(record.stops))}</td>
-      <td>${formatDuration(record.travelTimeHours)}</td>
-      <td>${escapeHtml(record.baggage)}</td>
-      <td class="is-number">${Number.isFinite(record.basePrice) ? `<strong>${formatCurrency(record.basePrice)}</strong><small class="price-cell-note">без багажа</small>` : "—"}</td>
-      <td class="is-number"><strong>${formatCurrency(record.totalPrice)}</strong><small class="price-cell-note">${escapeHtml(record.baggage)}</small></td>
-      <td class="is-number">${formatCurrency(record.pricePerPerson)}</td>
-      <td>${escapeHtml(record.payment)}</td>
-      <td>${offerLink(record)}</td>
-      <td>${record.bestFlag ? '<span class="badge badge--best">BEST</span>' : '<span class="badge badge--muted">—</span>'}</td>
-      <td class="is-number ${deltaClass(record.delta24h)}">${formatDelta(record.delta24h)}</td>
-      <td class="is-number ${deltaClass(record.delta7d)}">${formatDelta(record.delta7d)}</td>
-      <td class="is-number">${formatCurrency(record.min7d)}</td>
-      <td><span class="badge badge--${record.status}">${statusLabel(record.status)}</span></td>
-    </tr>
-  `).join("");
-
-  const mobileRows = filtered.slice(0, state.mobileRowsLimit);
-  els.journalCards.innerHTML = mobileRows.length ? mobileRows.map((record) => `
+  const shown = filtered.slice(0, state.mobileRowsLimit);
+  els.journalCards.innerHTML = shown.length ? shown.map((record) => `
     <article class="journal-card">
       <div class="journal-card__head">
-        <time datetime="${escapeHtml(record.timestamp)}">${formatDateTime(record.timestampMs)}</time>
-        <span class="badge badge--${record.status}">${statusLabel(record.status)}</span>
+        <div><p class="eyebrow">Цена проверена</p><time datetime="${escapeHtml(record.timestamp)}">${formatDateTime(record.timestampMs)} · ${formatRelative(record.timestampMs)}</time></div>
+        ${recordStatusMarkup(record)}
       </div>
       <div class="journal-card__route">
         <div>
           <h3>${escapeHtml(record.route)}</h3>
           <p>${escapeHtml(tripDates(record))} · ${escapeHtml(record.airline)}</p>
         </div>
-        ${priceStackMarkup(record, "journal-card__price", true)}
+      </div>
+      <div class="journal-card__content">
+        <div class="journal-card__journey">${ticketLegsMarkup(record, true)}<p class="home-status">${escapeHtml(homeStatus(record))}</p></div>
+        <div class="journal-card__fares"><h4>Тарифные варианты</h4>${priceStackMarkup(record, "journal-card__price", true)}</div>
       </div>
       <div class="journal-card__facts">
-        <span>Туда <b>${escapeHtml(legOneLine(record.outbound))}</b></span>
-        <span>Обратно <b>${escapeHtml(legOneLine(record.inbound))}</b></span>
-        <span>Сводка источника <b>${escapeHtml(journeySummary(record))}</b></span>
-        <span>Багаж <b>${escapeHtml(record.baggage)}</b></span>
-        <span>Изменение за 24 ч <b class="${deltaClass(record.delta24h)}">${formatDelta(record.delta24h)}</b></span>
-        <span>Минимум за 7 дней <b>${formatCurrency(record.min7d)}</b></span>
+        <span>Сводка перелёта <b>${escapeHtml(journeySummary(record))}</b></span>
+        <span>Δ 24 часа <b class="${deltaClass(record.delta24h)}">${formatDelta(record.delta24h)}</b></span>
+        <span>Δ 7 дней <b class="${deltaClass(record.delta7d)}">${formatDelta(record.delta7d)}</b></span>
+        <span>Мин. с багажом за 7 дней <b>${formatCurrency(record.min7d)}</b></span>
       </div>
       <div class="journal-card__footer">
-        <span><b>Оплата:</b> ${escapeHtml(record.payment)} ${record.bestFlag ? '<i class="badge badge--best">BEST</i>' : ""}</span>
+        <span><b>${escapeHtml(availabilityLabel(record))}.</b> Оплата: ${escapeHtml(record.payment)} ${record.bestFlag ? '<i class="badge badge--best">BEST</i>' : ""}</span>
         ${offerLink(record)}
       </div>
     </article>
-  `).join("") : `<div class="table-empty is-visible"><strong>Журнал пока пуст</strong><span>Первая карточка появится после очередной проверки цен.</span></div>`;
+  `).join("") : `<div class="table-empty is-visible"><strong>По выбранным фильтрам записей нет</strong><span>Включите другой тариф, аэропорт или период.</span></div>`;
 
-  els.journalEmpty.classList.toggle("is-visible", filtered.length === 0);
-  els.journalMore.hidden = mobileRows.length >= filtered.length;
+  els.journalMore.hidden = shown.length >= filtered.length;
   els.rowCount.textContent = pluralize(filtered.length, ["запись", "записи", "записей"]);
 }
 
@@ -619,8 +698,8 @@ function queueCharts(visible = getVisibleRecords(), scoped = getScopedRecords())
 function drawTrendChart(records) {
   const grouped = groupBy(records, (record) => record.timestamp);
   const points = [...grouped.values()].map((items) => {
-    const best = items.reduce((winner, item) => !winner || item.totalPrice < winner.totalPrice ? item : winner, null);
-    return { x: best.timestampMs, y: best.totalPrice, record: best };
+    const best = items.reduce((winner, item) => !winner || leadPrice(item) < leadPrice(winner) ? item : winner, null);
+    return { x: best.timestampMs, y: leadPrice(best), record: best };
   }).sort((a, b) => a.x - b.x);
 
   els.trendEmpty.hidden = points.length > 0;
@@ -630,27 +709,30 @@ function drawTrendChart(records) {
   const pad = { left: 66, right: 18, top: 34, bottom: 38 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
-  const values = points.map((point) => point.y).concat(state.config.takePrice);
+  const showThreshold = state.fareModes.size === 1 && state.fareModes.has("with_baggage");
+  const values = points.map((point) => point.y).concat(showThreshold ? state.config.takePrice : []);
   let minY = Math.floor(Math.min(...values, state.config.takePrice) * 0.94 / 10000) * 10000;
   let maxY = Math.ceil(Math.max(...values, state.config.takePrice) * 1.06 / 10000) * 10000;
   if (minY === maxY) { minY -= 10000; maxY += 10000; }
   drawGrid(ctx, pad, plotW, plotH, minY, maxY);
 
-  const thresholdY = yScale(state.config.takePrice, minY, maxY, pad.top, plotH);
-  ctx.save();
-  ctx.strokeStyle = css("--accent");
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([6, 6]);
-  ctx.beginPath();
-  ctx.moveTo(pad.left, thresholdY);
-  ctx.lineTo(pad.left + plotW, thresholdY);
-  ctx.stroke();
-  ctx.restore();
+  if (showThreshold) {
+    const thresholdY = yScale(state.config.takePrice, minY, maxY, pad.top, plotH);
+    ctx.save();
+    ctx.strokeStyle = css("--accent");
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, thresholdY);
+    ctx.lineTo(pad.left + plotW, thresholdY);
+    ctx.stroke();
+    ctx.restore();
+  }
 
   if (!points.length) {
     chartHits.trend = [];
     els.trendTooltip.hidden = true;
-    els.trendSummary.textContent = `Порог покупки: ${formatCurrency(state.config.takePrice)} за двоих`;
+    els.trendSummary.textContent = showThreshold ? `Порог покупки: ${formatCurrency(state.config.takePrice)} за двоих с багажом` : "Нет данных для выбранных тарифов";
     return;
   }
 
@@ -718,10 +800,10 @@ function drawAirportChart(records) {
     if (!items.length) return { airport, current: null, min7: null };
     const latest = Math.max(...items.map((item) => item.timestampMs));
     const currentItems = items.filter((item) => item.timestampMs === latest);
-    const currentRecord = currentItems.reduce((best, item) => !best || item.totalPrice < best.totalPrice ? item : best, null);
+    const currentRecord = currentItems.reduce((best, item) => !best || leadPrice(item) < leadPrice(best) ? item : best, null);
     const min7Items = items.filter((item) => item.timestampMs >= Date.now() - 7 * 86400000);
-    const min7Record = min7Items.reduce((best, item) => !best || item.totalPrice < best.totalPrice ? item : best, null);
-    return { airport, current: currentRecord.totalPrice, min7: min7Record?.totalPrice ?? null, currentRecord, min7Record };
+    const min7Record = min7Items.reduce((best, item) => !best || leadPrice(item) < leadPrice(best) ? item : best, null);
+    return { airport, current: leadPrice(currentRecord), min7: min7Record ? leadPrice(min7Record) : null, currentRecord, min7Record };
   });
   const hasData = data.some((item) => item.current !== null);
   els.airportEmpty.hidden = hasData;
@@ -758,15 +840,17 @@ function drawAirportChart(records) {
     ctx.fillText(item.airport, center, height - 14);
   });
 
-  const thresholdY = yScale(state.config.takePrice, minY, maxY, pad.top, plotH);
-  ctx.save();
-  ctx.strokeStyle = css("--accent");
-  ctx.setLineDash([5, 5]);
-  ctx.beginPath();
-  ctx.moveTo(pad.left, thresholdY);
-  ctx.lineTo(pad.left + plotW, thresholdY);
-  ctx.stroke();
-  ctx.restore();
+  if (state.fareModes.size === 1 && state.fareModes.has("with_baggage")) {
+    const thresholdY = yScale(state.config.takePrice, minY, maxY, pad.top, plotH);
+    ctx.save();
+    ctx.strokeStyle = css("--accent");
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, thresholdY);
+    ctx.lineTo(pad.left + plotW, thresholdY);
+    ctx.stroke();
+    ctx.restore();
+  }
   if (!hasData) els.airportTooltip.hidden = true;
   els.airportChart.setAttribute("aria-label", hasData ? `Сравнение цен из ${data.filter((item) => item.current).map((item) => item.airport).join(", ")}` : "Нет данных для сравнения аэропортов");
 }
@@ -875,8 +959,11 @@ function yScale(value, minY, maxY, top, height) {
 
 function exportCsv() {
   const records = getVisibleRecords().sort((a, b) => b.timestampMs - a.timestampMs);
-  const headers = ["Проверено", "Старт", "Маршрут", "Туда: маршрут", "Туда: вылет", "Туда: прилёт", "Туда: в пути, ч", "Туда: пересадки", "Обратно: маршрут", "Обратно: вылет", "Обратно: прилёт", "Обратно: в пути, ч", "Обратно: пересадки", "Уже дома", "Авиакомпания", "Сводные пересадки", "Сводное время, ч", "Багаж", "Цена без багажа за двоих", "Цена с багажом за двоих", "Цена с багажом на человека", "Оплата", "Источник", "Best flag", "Δ 24ч", "Δ 7д", "Мин 7д", "Статус"];
-  const rows = records.map((r) => [r.timestamp, r.origin, r.route, r.outbound.route, r.outbound.departureAt || r.outbound.date, r.outbound.arrivalAt, r.outbound.durationHours ?? "", formatLegStops(r.outbound), r.inbound.route, r.inbound.departureAt || r.inbound.date, r.inbound.arrivalAt, r.inbound.durationHours ?? "", formatLegStops(r.inbound), r.homeArrivalAt || r.homeArrivalDate || "Не получено", r.airline, r.stops, r.travelTimeHours ?? "", r.baggage, r.basePrice ?? "", r.totalPrice, r.pricePerPerson, r.payment, r.source, r.bestFlag ? "BEST" : "", r.delta24h ?? "", r.delta7d ?? "", r.min7d, statusLabel(r.status)]);
+  const headers = ["Проверено", "Старт", "Маршрут", "Туда: маршрут", "Туда: вылет", "Туда: прилёт", "Туда: в пути, ч", "Туда: пересадки", "Обратно: маршрут", "Обратно: вылет", "Обратно: прилёт", "Обратно: в пути, ч", "Обратно: пересадки", "Уже дома", "Авиакомпания", "Сводные пересадки", "Сводное время, ч", "Показанные тарифные варианты", "Цена без багажа за двоих", "Цена с багажом за двоих", "Цена с багажом на человека", "Оплата", "Источник", "Best flag", "Δ 24ч", "Δ 7д", "Мин 7д", "Статус"];
+  const rows = records.map((r) => {
+    const fares = visibleFareOptions(r).map((fare) => `${fare.label}: ${fare.price} ₽; багаж: ${fare.checkedBaggage}; ручная кладь: ${fare.carryOn}`).join(" | ");
+    return [r.timestamp, r.origin, r.route, r.outbound.route, r.outbound.departureAt || r.outbound.date, r.outbound.arrivalAt, r.outbound.durationHours ?? "", formatLegStops(r.outbound), r.inbound.route, r.inbound.departureAt || r.inbound.date, r.inbound.arrivalAt, r.inbound.durationHours ?? "", formatLegStops(r.inbound), r.homeArrivalAt || r.homeArrivalDate || "Не получено", r.airline, r.stops, r.travelTimeHours ?? "", fares, state.fareModes.has("without_baggage") ? r.basePrice ?? "" : "", state.fareModes.has("with_baggage") ? r.totalPrice : "", state.fareModes.has("with_baggage") ? r.pricePerPerson : "", r.payment, r.source, r.bestFlag ? "BEST" : "", r.delta24h ?? "", r.delta7d ?? "", r.min7d, statusLabel(r.status)];
+  });
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(";")).join("\r\n");
   const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
@@ -937,16 +1024,26 @@ function formatCurrency(value) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency: state.config.currency || "RUB", maximumFractionDigits: 0 }).format(Number(value));
 }
 
+function visibleFareOptions(record) {
+  return Array.isArray(record?.fareOptions) ? record.fareOptions.filter((fare) => state.fareModes.has(fare.kind)) : [];
+}
+
 function leadPrice(record) {
-  return Number.isFinite(record?.basePrice) ? record.basePrice : record.totalPrice;
+  const fares = visibleFareOptions(record);
+  return fares.length ? Math.min(...fares.map((fare) => fare.price)) : Number.POSITIVE_INFINITY;
 }
 
 function priceStackMarkup(record, className = "", includePerPerson = false) {
-  const hasBase = Number.isFinite(record?.basePrice);
-  const label = hasBase ? "без багажа" : "с багажом";
-  const bagLine = hasBase ? `<span>${formatCurrency(record.totalPrice)} с багажом</span>` : `<span>${escapeHtml(record.baggage)}</span>`;
-  const perPerson = includePerPerson ? `<small>${formatCurrency(record.pricePerPerson)} / чел. с багажом</small>` : "";
-  return `<div class="price-stack ${escapeHtml(className)}"><strong>${formatCurrency(leadPrice(record))}</strong><small>${label}</small>${bagLine}${perPerson}</div>`;
+  const fares = visibleFareOptions(record);
+  if (!fares.length) return '<p class="scope-note">Нет тарифов по выбранному фильтру</p>';
+  return `<div class="fare-variants ${escapeHtml(className)}">${fares.map((fare) => `
+    <article class="fare-variant" data-fare-kind="${escapeHtml(fare.kind)}">
+      <div class="fare-variant__top"><span>${escapeHtml(fare.label)}</span><strong>${formatCurrency(fare.price)}</strong></div>
+      <p><b>Багаж:</b> ${escapeHtml(fare.checkedBaggage)}</p>
+      <p><b>Ручная кладь:</b> ${escapeHtml(fare.carryOn)}</p>
+      ${includePerPerson ? `<small>${formatCurrency(fare.price / state.config.passengers)} на человека</small>` : ""}
+      ${fare.note ? `<small>${escapeHtml(fare.note)}</small>` : ""}
+    </article>`).join("")}</div>`;
 }
 
 function shortCurrency(value) {
@@ -1011,7 +1108,7 @@ function journeySummary(record) {
 
 function ticketDetailsMarkup(record, observedAt, extraNote = "") {
   return `<div class="ticket-identity"><b>${escapeHtml(record.airline)}</b><span>${escapeHtml(record.route || "Маршрут не указан")}</span></div>
-    ${Number.isFinite(record.basePrice) ? priceStackMarkup(record, "ticket-price") : ""}
+    ${priceStackMarkup(record, "ticket-price")}
     ${ticketLegsMarkup(record)}
     <p class="home-status">${escapeHtml(homeStatus(record))}</p>
     ${extraNote ? `<p class="ticket-extra">${escapeHtml(extraNote)}</p>` : ""}
@@ -1090,9 +1187,12 @@ function tripDates(record) {
 }
 
 function renderDiscovery() {
-  const runs = state.discoveryRuns.filter((r) => r.status === "completed" && Number.isFinite(Date.parse(r.timestamp)));
-  const latest = runs.length ? Math.max(...runs.map((r) => Date.parse(r.timestamp))) : null;
-  setText(els.discoveryUpdated, latest ? `Проверено ${formatDateTime(latest)}` : "Ещё не выполнен");
+  const schedule = discoverySchedule();
+  const latest = schedule.completed ? Date.parse(schedule.completed.timestamp) : null;
+  const attemptText = schedule.lastRun
+    ? `Последняя попытка ${formatDateTime(schedule.lastRun.timestamp)} · ${monitorRunLabel(schedule.lastRun.status)}`
+    : "Поиск ещё не запускался";
+  setText(els.discoveryUpdated, attemptText);
   const relevant = state.events.filter((event) => state.airports.has(event.origin)
     && FlightRules.eligibility(event) !== "excluded" && isWithinDuration(event) && (state.route === "all" || event.route === state.route)
     && FlightRules.safeUrl(event.source) && Number.isFinite(Date.parse(event.timestamp)));
@@ -1109,16 +1209,40 @@ function renderDiscovery() {
     const events = relevant.filter((e) => e.kind === kind && Date.parse(e.timestamp) <= now && column.includes(e)
       && (!["cancelled", "sold_out"].includes(kind) || e.confirmed === true));
     const count = new Set(events.map((e) => e.flightId)).size;
-    return `<p>${label}<b>${latest ? count : "—"}</b></p>`;
+    return `<p>${label}<b>${latest ? count : "не проверено"}</b></p>`;
   }).join("")}</article>`).join("");
   const events = relevant.filter((e) => e.kind !== "baseline" && Date.parse(e.timestamp) <= now && Date.parse(e.timestamp) >= now - 30 * 86400000)
     .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
-  els.discoveryEvents.innerHTML = `<p class="scope-note">${latest ? "Счётчики охватывают накопленную историю проверок. Первый список — исходная база, а не новые рейсы. Отмена или распродажа требуют подтверждения." : "Ежедневный поиск ещё не завершён. До первой проверки количество новых и исчезнувших рейсов неизвестно."}</p>`
+  const runNote = schedule.lastRun && schedule.lastRun.status !== "completed"
+    ? `Последняя попытка завершилась со статусом «${monitorRunLabel(schedule.lastRun.status)}», поэтому полный список мог быть получен не полностью.`
+    : "";
+  const nextNote = `Следующая проверка: ${formatScheduleTime(schedule.nextAt)}.`;
+  els.discoveryEvents.innerHTML = `<p class="scope-note">${latest ? "Счётчики охватывают накопленную историю полных проверок. Ноль означает, что изменений не найдено. Отмена или распродажа учитываются только после подтверждения источником." : "Полная ежедневная проверка ещё не завершалась, поэтому количество новых и исчезнувших рейсов пока неизвестно."} ${escapeHtml(runNote)} ${escapeHtml(nextNote)}</p>`
     + events.map((e) => `<article class="discovery-event"><div><strong>${escapeHtml(e.route)}</strong><p>${escapeHtml(e.kind === "cancelled" || e.kind === "sold_out" ? e.confirmed === true ? labels[e.kind] : "Статус не подтверждён" : labels[e.kind] || "Изменение")} · ${formatDateTime(e.timestamp)}</p>${ticketLegsMarkup(e, true)}<p class="home-status">${escapeHtml(homeStatus(e))}</p>${e.note ? `<p>${escapeHtml(e.note)}</p>` : ""}</div>${offerLink(e)}</article>`).join("");
 }
 
+function availabilityLabel(record) {
+  if (record.availability === "cancelled") return "Рейс отменён — подтверждено источником";
+  if (record.availability === "sold_out") return "Билеты распроданы — подтверждено источником";
+  if (record.availability === "not_found") return "Предложение не найдено при последней проверке";
+  return "Рейс был найден; отмена не подтверждена";
+}
+
+function recordStatusMarkup(record) {
+  const ageHours = Math.max(0, (Date.now() - record.timestampMs) / 3600000);
+  const stale = ageHours > state.config.checkIntervalHours;
+  const unavailable = ["cancelled", "sold_out", "not_found"].includes(record.availability);
+  if (unavailable) {
+    return `<div class="record-status"><span class="badge badge--unavailable">${escapeHtml(availabilityLabel(record))}</span><small>Статус получен ${escapeHtml(formatDateTime(record.timestampMs))}</small></div>`;
+  }
+  if (stale) {
+    return `<div class="record-status"><span class="badge badge--stale">Цена от ${escapeHtml(formatDateTime(record.timestampMs))}</span><small>Не означает отмену · следующая общая проверка ${escapeHtml(formatScheduleTime(priceSchedule().nextAt))}</small></div>`;
+  }
+  return `<div class="record-status"><span class="badge badge--${escapeHtml(record.status)}">${escapeHtml(statusLabel(record.status))}</span><small>Цена проверена ${escapeHtml(formatRelative(record.timestampMs))}</small></div>`;
+}
+
 function statusLabel(status) {
-  return { take: "БРАТЬ", watch: "НАБЛЮДАТЬ", expensive: "ДОРОГО", stale: "ДАННЫЕ УСТАРЕЛИ", unavailable: "НЕДОСТУПНО", excluded: "ВНЕ УСЛОВИЙ" }[status] || "—";
+  return { take: "БРАТЬ", watch: "НАБЛЮДАТЬ", expensive: "ДОРОГО", stale: "ЦЕНА ТРЕБУЕТ ПРОВЕРКИ", unavailable: "НЕДОСТУПНО", excluded: "ВНЕ УСЛОВИЙ" }[status] || "—";
 }
 
 function pluralize(value, forms) {

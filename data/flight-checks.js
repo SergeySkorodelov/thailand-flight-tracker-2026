@@ -1985,6 +1985,26 @@ window.FLIGHT_TRACKER_DATA = {
       "basePriceNote": "Тариф с небольшой сумкой, без зарегистрированного багажа",
       "baggage": "10 кг — 2 места по данным выдачи",
       "totalPrice": 230090,
+      "fareOptions": [
+        {
+          "id": "small-bag-only",
+          "kind": "without_baggage",
+          "label": "Без зарегистрированного багажа",
+          "price": 187806,
+          "checkedBaggage": "Нет",
+          "carryOn": "Небольшая сумка; вес не указан",
+          "note": "Базовый тариф"
+        },
+        {
+          "id": "checked-10kg",
+          "kind": "with_baggage",
+          "label": "С багажом 10 кг",
+          "price": 230090,
+          "checkedBaggage": "10 кг на человека — 2 места",
+          "carryOn": "Небольшая сумка; вес не указан",
+          "note": "Тариф с зарегистрированным багажом"
+        }
+      ],
       "payment": "Цена в ₽; российскую карту уточнить у продавца",
       "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
       "sourceType": "search",

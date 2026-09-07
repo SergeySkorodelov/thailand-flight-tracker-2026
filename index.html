@@ -78,6 +78,19 @@
           <legend>Откуда летим</legend>
           <div class="chip-list" id="airport-filter"></div>
         </fieldset>
+        <fieldset class="control-group fare-control">
+          <legend>Какие тарифы показывать</legend>
+          <div class="chip-list" id="fare-filter">
+            <label class="airport-option fare-option">
+              <input type="checkbox" data-fare-mode="with_baggage" checked>
+              <span>С багажом</span>
+            </label>
+            <label class="airport-option fare-option">
+              <input type="checkbox" data-fare-mode="without_baggage" checked>
+              <span>Без багажа</span>
+            </label>
+          </div>
+        </fieldset>
         <label class="control-group duration-control">
           <span>Длительность перелёта</span>
           <select id="duration-filter" aria-describedby="duration-help">
@@ -112,7 +125,7 @@
         <span class="trip-strip__label">Таиланд</span>
         <strong>BKK · HKT</strong>
       </div>
-      <span class="threshold-pill">Брать ≤ <b>175 000 ₽</b></span>
+      <span class="threshold-pill">Брать ≤ <b>175 000 ₽ с багажом</b></span>
     </section>
 
     <section class="filters panel" aria-labelledby="filters-title">
@@ -146,6 +159,11 @@
         </label>
       </div>
       </div>
+    </section>
+
+    <section class="schedule-grid" aria-label="Расписание обновлений">
+      <article class="panel schedule-card" id="price-schedule"></article>
+      <article class="panel schedule-card" id="discovery-schedule"></article>
     </section>
 
     <section class="kpi-grid" id="overview" aria-label="Ключевые показатели">
@@ -194,8 +212,8 @@
             <h2>Динамика лучшей цены</h2>
           </div>
           <div class="legend" aria-label="Легенда графика">
-            <span><i class="legend__line"></i> Цена с багажом</span>
-            <span><i class="legend__dash"></i> Порог «брать»</span>
+            <span><i class="legend__line"></i> <span id="trend-price-legend">Лучшая из выбранных тарифов</span></span>
+            <span id="threshold-legend"><i class="legend__dash"></i> Порог «брать» для тарифа с багажом</span>
           </div>
         </div>
         <div class="chart-wrap">
@@ -219,8 +237,8 @@
           <div class="chart-empty" id="airport-empty">Пока нечего сравнивать</div>
         </div>
         <div class="mini-legend">
-          <span><i class="mini-legend__dot mini-legend__dot--current"></i> Текущая с багажом</span>
-          <span><i class="mini-legend__dot mini-legend__dot--min"></i> Мин. 7 дней с багажом</span>
+          <span><i class="mini-legend__dot mini-legend__dot--current"></i> <span id="airport-current-legend">Текущая</span></span>
+          <span><i class="mini-legend__dot mini-legend__dot--min"></i> <span id="airport-min-legend">Мин. 7 дней</span></span>
         </div>
       </article>
     </section>
@@ -264,35 +282,6 @@
             <input id="journal-search" type="search" placeholder="Маршрут, авиакомпания…">
           </label>
           <button class="button button--secondary button--small" id="export-csv" type="button">Скачать CSV</button>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Проверено</th>
-              <th>Маршрут / даты</th>
-              <th>Авиакомпания</th>
-              <th>Пересадки</th>
-              <th>В пути</th>
-              <th>Багаж</th>
-              <th class="is-number">Без багажа / 2 чел.</th>
-              <th class="is-number">С багажом / 2 чел.</th>
-              <th class="is-number">С багажом / чел.</th>
-              <th>Оплата</th>
-              <th>Источник</th>
-              <th>Best</th>
-              <th class="is-number">Δ 24ч</th>
-              <th class="is-number">Δ 7д</th>
-              <th class="is-number">Мин. 7д</th>
-              <th>Статус</th>
-            </tr>
-          </thead>
-          <tbody id="journal-body"></tbody>
-        </table>
-        <div class="table-empty" id="journal-empty">
-          <strong>Журнал пока пуст</strong>
-          <span>Первая строка появится после очередной проверки цен.</span>
         </div>
       </div>
       <div class="journal-cards" id="journal-cards" aria-live="polite"></div>
