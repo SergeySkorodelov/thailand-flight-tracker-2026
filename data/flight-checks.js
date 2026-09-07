@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-07T04:00:37.000Z",
+    "updatedAt": "2026-09-07T08:02:27.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -1934,6 +1934,67 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Самый быстрый вариант выдачи с одной пересадкой. Источник показывал остаток 5 билетов по этой цене, но это не подтверждает распродажу рейса. Прилёт в Казань 7 января в 19:45; возвращение домой в Набережные Челны 8 января предполагается, но дорога не подтверждена. Длительность пересадок, обязательные сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-110227-kzn-bkk-18-07-mixed-cheapest-user-confirmed",
+      "timestamp": "2026-09-07T11:02:27+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "S7 Airlines + Spring Airlines + Air Arabia",
+      "stops": 2,
+      "travelTimeHours": 41,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T21:30:00+03:00",
+        "arrivalAt": "2026-12-20T13:05:00+07:00",
+        "durationHours": 35.5833,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "OVB",
+            "durationHours": null
+          },
+          {
+            "airport": "XIY",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T08:20:00+07:00",
+        "arrivalAt": "2027-01-08T21:20:00+03:00",
+        "durationHours": 41,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          },
+          {
+            "airport": "UFA",
+            "durationHours": null
+          }
+        ]
+      },
+      "basePrice": 187806,
+      "basePriceNote": "Тариф с небольшой сумкой, без зарегистрированного багажа",
+      "baggage": "10 кг — 2 места по данным выдачи",
+      "totalPrice": 230090,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Вариант подтверждён пользовательским скриншотом выдачи: 187 806 ₽ — базовый тариф с небольшой сумкой; 230 090 ₽ — цена с зарегистрированным багажом 10 кг на каждого. Оба плеча короче 70 часов. Прилёт в Казань 8 января в 21:20; возвращение домой в Набережные Челны 9 января предполагается, но дорога не подтверждена. Длительность отдельных пересадок, обязательные сборы и оплата российской картой не подтверждены."
     }
   ]
 };

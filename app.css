@@ -411,6 +411,12 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 .ticket-identity { display: grid; gap: 2px; }
 .ticket-identity b { color: var(--text); font-size: 13px; }
 .ticket-identity span { color: var(--text-soft); font-size: 12px; }
+.price-stack { display: grid; justify-items: end; gap: 1px; color: var(--primary-ink); white-space: nowrap; }
+.price-stack strong { font-size: 18px; line-height: 1.1; letter-spacing: -0.025em; }
+.price-stack small { color: var(--text-soft); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.price-stack span { color: var(--text); font-size: 11px; font-weight: 750; }
+.ticket-price { grid-template-columns: auto auto; justify-items: start; align-items: baseline; column-gap: 8px; margin-top: 8px; padding: 8px 9px; border-radius: 9px; background: var(--surface-soft); white-space: normal; }
+.ticket-price span { grid-column: 1 / -1; }
 .ticket-legs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 10px; }
 .ticket-leg { min-width: 0; padding: 8px; border: 1px solid color-mix(in oklch, var(--border) 74%, transparent); border-radius: 9px; background: color-mix(in oklch, var(--surface-raised) 82%, transparent); }
 .ticket-leg > div { display: grid; gap: 1px; margin-bottom: 5px; }
@@ -492,7 +498,7 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 .route-card h3 { font-size: 14px; line-height: 1.3; }
 .route-card__dates { margin-top: 3px; color: var(--text-soft); font-size: 11px; }
 .route-card .ticket-legs { margin-top: 12px; }
-.route-card__price { white-space: nowrap; color: var(--primary-ink); font-weight: 800; }
+.route-card__price { min-width: max-content; white-space: nowrap; color: var(--primary-ink); font-weight: 800; }
 .route-card__metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 13px; }
 .route-card__metrics span { display: flex; flex-direction: column; padding: 8px; border-radius: 9px; background: var(--surface-soft); color: var(--text-soft); font-size: 10px; }
 .route-card__metrics b { margin-top: 2px; color: var(--text); font-size: 12px; }
@@ -509,10 +515,11 @@ select { padding: 0 36px 0 12px; cursor: pointer; }
 .search-field input::placeholder { color: var(--text-faint); }
 
 .table-wrap { position: relative; overflow-x: auto; border-top: 1px solid var(--border); }
-table { width: 100%; min-width: 1580px; border-collapse: collapse; }
+table { width: 100%; min-width: 1700px; border-collapse: collapse; }
 th, td { padding: 11px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
 th { position: sticky; top: 0; z-index: 1; background: var(--surface-soft); color: var(--text-soft); font-size: 10px; font-weight: 800; letter-spacing: 0.035em; text-transform: uppercase; white-space: nowrap; }
 td { color: var(--text); font-size: 12px; }
+.price-cell-note { display: block; max-width: 150px; margin-top: 2px; color: var(--text-soft); font-size: 9px; font-weight: 600; white-space: normal; }
 tbody tr { transition: background-color 120ms ease; }
 tbody tr:hover { background: var(--surface-tint); }
 .is-number { text-align: right; font-variant-numeric: tabular-nums; }
@@ -552,7 +559,8 @@ tbody tr:hover { background: var(--surface-tint); }
 .journal-card__route p { margin-top: 3px; color: var(--text-soft); font-size: 11px; }
 .journal-card__price { align-items: flex-end; flex-direction: column; gap: 1px; white-space: nowrap; color: var(--primary-ink); }
 .journal-card__price strong { font-size: 18px; letter-spacing: -0.025em; }
-.journal-card__price small { color: var(--text-soft); font-size: 10px; }
+.journal-card__price small { color: var(--text-soft); font-size: 9px; }
+.journal-card__price span { font-size: 10px; }
 .journal-card__facts { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 13px; }
 .journal-card__facts span { display: flex; flex-direction: column; min-width: 0; padding: 8px 9px; border-radius: 9px; background: var(--surface-soft); color: var(--text-soft); font-size: 10px; }
 .journal-card__facts b { margin-top: 2px; overflow: hidden; color: var(--text); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }

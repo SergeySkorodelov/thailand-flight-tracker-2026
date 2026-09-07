@@ -274,6 +274,7 @@ function deriveRecords(rawChecks, config) {
 
   normalized.forEach((record) => {
     record.pricePerPerson = record.totalPrice / config.passengers;
+    record.basePricePerPerson = Number.isFinite(record.basePrice) ? record.basePrice / config.passengers : null;
     record.bestFlag = record.totalPrice === timestampMin.get(record.timestamp);
     record.delta24h = historicalDelta(normalized, record, 24);
     record.delta7d = historicalDelta(normalized, record, 24 * 7);
@@ -288,6 +289,7 @@ function deriveRecords(rawChecks, config) {
 function normalizeRecord(raw, index, config) {
   const timestampMs = Date.parse(raw.timestamp);
   const totalPrice = Number(raw.totalPrice);
+  const basePrice = raw.basePrice === null || raw.basePrice === undefined || raw.basePrice === "" ? null : Number(raw.basePrice);
   if (!Number.isFinite(timestampMs) || !Number.isFinite(totalPrice) || totalPrice <= 0) return null;
   const origin = String(raw.origin || "").toUpperCase();
   const route = String(raw.route || "").trim();
@@ -327,6 +329,8 @@ function normalizeRecord(raw, index, config) {
     stops: raw.stops ?? "Не указано",
     travelTimeHours: Number.isFinite(Number(raw.travelTimeHours)) ? Number(raw.travelTimeHours) : null,
     baggage: String(raw.baggage || "Не проверено"),
+    basePrice: Number.isFinite(basePrice) && basePrice > 0 ? basePrice : null,
+    basePriceNote: String(raw.basePriceNote || "Без зарегистрированного багажа"),
     totalPrice,
     payment: String(raw.payment || "Не проверено"),
     source: String(raw.source || ""),
@@ -455,20 +459,20 @@ function renderKpis(records) {
 
   const latestTimestamp = Math.max(...records.map((record) => record.timestampMs));
   const currentRows = records.filter((record) => record.timestampMs === latestTimestamp);
-  const best = currentRows.reduce((winner, record) => !winner || record.totalPrice < winner.totalPrice ? record : winner, null);
+  const best = currentRows.reduce((winner, record) => !winner || leadPrice(record) < leadPrice(winner) ? record : winner, null);
   const sevenRows = records.filter((record) => record.timestampMs >= Date.now() - 7 * 86400000);
-  const minSevenRecord = sevenRows.reduce((winner, record) => !winner || record.totalPrice < winner.totalPrice ? record : winner, null);
-  const minSeven = minSevenRecord?.totalPrice ?? null;
+  const minSevenRecord = sevenRows.reduce((winner, record) => !winner || leadPrice(record) < leadPrice(winner) ? record : winner, null);
+  const minSeven = minSevenRecord ? leadPrice(minSevenRecord) : null;
   const status = getStatus(best, state.config);
 
-  setText(els.kpiCurrent, formatCurrency(best.totalPrice));
+  setText(els.kpiCurrent, formatCurrency(leadPrice(best)));
   els.kpiCurrentNote.innerHTML = ticketDetailsMarkup(best, latestTimestamp);
   els.kpiCurrentLink.innerHTML = offerLink(best);
-  setText(els.kpiRoute, formatCurrency(best.totalPrice));
+  setText(els.kpiRoute, formatCurrency(leadPrice(best)));
   els.kpiRouteNote.innerHTML = ticketDetailsMarkup(best, latestTimestamp);
   els.kpiRouteLink.innerHTML = offerLink(best);
   setText(els.kpiSeven, formatCurrency(minSeven));
-  els.kpiSevenNote.innerHTML = minSevenRecord ? ticketDetailsMarkup(minSevenRecord, minSevenRecord.timestampMs, minSeven === best.totalPrice ? "Последняя цена — минимум недели" : `Последняя цена выше на ${formatCurrency(best.totalPrice - minSeven)}`) : "За последние 7 дней проверок нет";
+  els.kpiSevenNote.innerHTML = minSevenRecord ? ticketDetailsMarkup(minSevenRecord, minSevenRecord.timestampMs, minSeven === leadPrice(best) ? "Последняя базовая цена — минимум недели" : `Последняя базовая цена выше на ${formatCurrency(leadPrice(best) - minSeven)}`) : "За последние 7 дней проверок нет";
   if (minSevenRecord) els.kpiSevenLink.innerHTML = offerLink(minSevenRecord);
   setText(els.kpiSignal, statusLabel(status));
   els.kpiSignalNote.innerHTML = monitorStatusMarkup(best, status);
@@ -509,7 +513,7 @@ function renderRouteSummary(records) {
   const groups = groupBy(records, (record) => record.tripKey);
   const summaries = [...groups.values()].map((items) => {
     const latest = Math.max(...items.map((item) => item.timestampMs));
-    const current = items.filter((item) => item.timestampMs === latest).reduce((best, item) => !best || item.totalPrice < best.totalPrice ? item : best, null);
+    const current = items.filter((item) => item.timestampMs === latest).reduce((best, item) => !best || leadPrice(item) < leadPrice(best) ? item : best, null);
     const min = Math.min(...items.map((item) => item.totalPrice));
     return { current, min, count: items.length };
   }).sort((a, b) => a.current.totalPrice - b.current.totalPrice);
@@ -527,13 +531,13 @@ function renderRouteSummary(records) {
           <h3>${escapeHtml(current.route)}</h3>
           <p class="route-card__dates">${escapeHtml(tripDates(current))} · ${count} набл.</p>
         </div>
-        <span class="route-card__price">${formatCurrency(current.totalPrice)}</span>
+        ${priceStackMarkup(current, "route-card__price")}
       </div>
       ${ticketLegsMarkup(current, true)}
       <p class="home-status">${escapeHtml(homeStatus(current))}</p>
       <div class="route-card__metrics">
         <span>Сводка источника <b>${escapeHtml(journeySummary(current))}</b></span>
-        <span>Мин. периода <b>${formatCurrency(min)}</b></span>
+        <span>Мин. с багажом <b>${formatCurrency(min)}</b></span>
         <span>Δ 24 часа <b class="${deltaClass(current.delta24h)}">${formatDelta(current.delta24h)}</b></span>
       </div>
       <div class="offer-row">${offerLink(current)}<span>${escapeHtml(statusLabel(current.status))}</span></div>
@@ -557,7 +561,8 @@ function renderJournal(records) {
       <td>${escapeHtml(formatStops(record.stops))}</td>
       <td>${formatDuration(record.travelTimeHours)}</td>
       <td>${escapeHtml(record.baggage)}</td>
-      <td class="is-number"><strong>${formatCurrency(record.totalPrice)}</strong></td>
+      <td class="is-number">${Number.isFinite(record.basePrice) ? `<strong>${formatCurrency(record.basePrice)}</strong><small class="price-cell-note">без багажа</small>` : "—"}</td>
+      <td class="is-number"><strong>${formatCurrency(record.totalPrice)}</strong><small class="price-cell-note">${escapeHtml(record.baggage)}</small></td>
       <td class="is-number">${formatCurrency(record.pricePerPerson)}</td>
       <td>${escapeHtml(record.payment)}</td>
       <td>${offerLink(record)}</td>
@@ -581,10 +586,7 @@ function renderJournal(records) {
           <h3>${escapeHtml(record.route)}</h3>
           <p>${escapeHtml(tripDates(record))} · ${escapeHtml(record.airline)}</p>
         </div>
-        <div class="journal-card__price">
-          <strong>${formatCurrency(record.totalPrice)}</strong>
-          <small>${formatCurrency(record.pricePerPerson)} / чел.</small>
-        </div>
+        ${priceStackMarkup(record, "journal-card__price", true)}
       </div>
       <div class="journal-card__facts">
         <span>Туда <b>${escapeHtml(legOneLine(record.outbound))}</b></span>
@@ -873,8 +875,8 @@ function yScale(value, minY, maxY, top, height) {
 
 function exportCsv() {
   const records = getVisibleRecords().sort((a, b) => b.timestampMs - a.timestampMs);
-  const headers = ["Проверено", "Старт", "Маршрут", "Туда: маршрут", "Туда: вылет", "Туда: прилёт", "Туда: в пути, ч", "Туда: пересадки", "Обратно: маршрут", "Обратно: вылет", "Обратно: прилёт", "Обратно: в пути, ч", "Обратно: пересадки", "Уже дома", "Авиакомпания", "Сводные пересадки", "Сводное время, ч", "Багаж", "Цена за двоих", "Цена на человека", "Оплата", "Источник", "Best flag", "Δ 24ч", "Δ 7д", "Мин 7д", "Статус"];
-  const rows = records.map((r) => [r.timestamp, r.origin, r.route, r.outbound.route, r.outbound.departureAt || r.outbound.date, r.outbound.arrivalAt, r.outbound.durationHours ?? "", formatLegStops(r.outbound), r.inbound.route, r.inbound.departureAt || r.inbound.date, r.inbound.arrivalAt, r.inbound.durationHours ?? "", formatLegStops(r.inbound), r.homeArrivalAt || r.homeArrivalDate || "Не получено", r.airline, r.stops, r.travelTimeHours ?? "", r.baggage, r.totalPrice, r.pricePerPerson, r.payment, r.source, r.bestFlag ? "BEST" : "", r.delta24h ?? "", r.delta7d ?? "", r.min7d, statusLabel(r.status)]);
+  const headers = ["Проверено", "Старт", "Маршрут", "Туда: маршрут", "Туда: вылет", "Туда: прилёт", "Туда: в пути, ч", "Туда: пересадки", "Обратно: маршрут", "Обратно: вылет", "Обратно: прилёт", "Обратно: в пути, ч", "Обратно: пересадки", "Уже дома", "Авиакомпания", "Сводные пересадки", "Сводное время, ч", "Багаж", "Цена без багажа за двоих", "Цена с багажом за двоих", "Цена с багажом на человека", "Оплата", "Источник", "Best flag", "Δ 24ч", "Δ 7д", "Мин 7д", "Статус"];
+  const rows = records.map((r) => [r.timestamp, r.origin, r.route, r.outbound.route, r.outbound.departureAt || r.outbound.date, r.outbound.arrivalAt, r.outbound.durationHours ?? "", formatLegStops(r.outbound), r.inbound.route, r.inbound.departureAt || r.inbound.date, r.inbound.arrivalAt, r.inbound.durationHours ?? "", formatLegStops(r.inbound), r.homeArrivalAt || r.homeArrivalDate || "Не получено", r.airline, r.stops, r.travelTimeHours ?? "", r.baggage, r.basePrice ?? "", r.totalPrice, r.pricePerPerson, r.payment, r.source, r.bestFlag ? "BEST" : "", r.delta24h ?? "", r.delta7d ?? "", r.min7d, statusLabel(r.status)]);
   const csv = [headers, ...rows].map((row) => row.map(csvCell).join(";")).join("\r\n");
   const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
@@ -933,6 +935,18 @@ function groupBy(items, keyFn) {
 function formatCurrency(value) {
   if (value === null || value === undefined || !Number.isFinite(Number(value))) return "—";
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency: state.config.currency || "RUB", maximumFractionDigits: 0 }).format(Number(value));
+}
+
+function leadPrice(record) {
+  return Number.isFinite(record?.basePrice) ? record.basePrice : record.totalPrice;
+}
+
+function priceStackMarkup(record, className = "", includePerPerson = false) {
+  const hasBase = Number.isFinite(record?.basePrice);
+  const label = hasBase ? "без багажа" : "с багажом";
+  const bagLine = hasBase ? `<span>${formatCurrency(record.totalPrice)} с багажом</span>` : `<span>${escapeHtml(record.baggage)}</span>`;
+  const perPerson = includePerPerson ? `<small>${formatCurrency(record.pricePerPerson)} / чел. с багажом</small>` : "";
+  return `<div class="price-stack ${escapeHtml(className)}"><strong>${formatCurrency(leadPrice(record))}</strong><small>${label}</small>${bagLine}${perPerson}</div>`;
 }
 
 function shortCurrency(value) {
@@ -997,6 +1011,7 @@ function journeySummary(record) {
 
 function ticketDetailsMarkup(record, observedAt, extraNote = "") {
   return `<div class="ticket-identity"><b>${escapeHtml(record.airline)}</b><span>${escapeHtml(record.route || "Маршрут не указан")}</span></div>
+    ${Number.isFinite(record.basePrice) ? priceStackMarkup(record, "ticket-price") : ""}
     ${ticketLegsMarkup(record)}
     <p class="home-status">${escapeHtml(homeStatus(record))}</p>
     ${extraNote ? `<p class="ticket-extra">${escapeHtml(extraNote)}</p>` : ""}
