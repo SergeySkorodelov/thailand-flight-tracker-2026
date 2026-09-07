@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-06T15:57:43.604Z",
-  "sourceUpdatedAt": "2026-09-06T15:57:00.000Z",
-  "latestCheckAt": "2026-09-06T18:57:00+03:00",
+  "generatedAt": "2026-09-07T04:02:03.722Z",
+  "sourceUpdatedAt": "2026-09-07T04:00:37.000Z",
+  "latestCheckAt": "2026-09-07T07:00:37+03:00",
   "scope": {
     "departureDates": [
       "2026-12-18",
@@ -37,62 +37,62 @@
     "label": "ДОРОГО",
     "urgent": false,
     "notify": false,
-    "observedAt": "2026-09-06T18:57:00+03:00",
-    "expiresAt": "2026-09-06T21:57:00.000Z",
+    "observedAt": "2026-09-07T07:00:37+03:00",
+    "expiresAt": "2026-09-07T10:00:37.000Z",
     "missingChecks": [
       "возвращение домой",
       "обязательные сборы",
       "оплата российской картой"
     ],
     "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой",
-    "route": "NBC→BKK / BKK→NBC",
-    "departureDate": "2026-12-20",
-    "returnDate": "2027-01-09",
-    "homeArrivalDate": "2027-01-09",
+    "route": "KZN→BKK / BKK→KZN",
+    "departureDate": "2026-12-18",
+    "returnDate": "2027-01-07",
+    "homeArrivalDate": "2027-01-08",
     "homeArrivalAt": null,
     "outbound": {
-      "route": "NBC→BKK",
-      "departureAt": "2026-12-20T17:40:00+03:00",
-      "arrivalAt": "2026-12-21T10:40:00+07:00",
-      "durationHours": 13,
+      "route": "KZN→BKK",
+      "departureAt": "2026-12-18T23:55:00+03:00",
+      "arrivalAt": "2026-12-20T05:30:00+07:00",
+      "durationHours": 25.5833,
       "stops": 1,
       "layovers": [
         {
-          "airport": "SVO",
+          "airport": "SHJ",
           "durationHours": null
         }
       ]
     },
     "inbound": {
-      "route": "BKK→NBC",
-      "departureAt": "2027-01-09T10:15:00+07:00",
-      "arrivalAt": "2027-01-09T20:10:00+03:00",
-      "durationHours": 13.9167,
+      "route": "BKK→KZN",
+      "departureAt": "2027-01-07T11:25:00+07:00",
+      "arrivalAt": "2027-01-07T22:55:00+03:00",
+      "durationHours": 15.5,
       "stops": 1,
       "layovers": [
         {
-          "airport": "SVO",
+          "airport": "SHJ",
           "durationHours": null
         }
       ]
     },
-    "airline": "Аэрофлот",
+    "airline": "Air Arabia",
     "stops": 1,
-    "travelTimeHours": 13.9167,
-    "baggage": "23 кг — 2 места по данным выдачи",
-    "totalPrice": 495939,
-    "pricePerPerson": 247970,
+    "travelTimeHours": 25.5833,
+    "baggage": "20 кг — 2 места по данным выдачи",
+    "totalPrice": 205043,
+    "pricePerPerson": 102522,
     "payment": "Цена в ₽; российскую карту уточнить у продавца",
-    "source": "https://www.aviasales.ru/search/NBC2012BKK09012",
+    "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
     "sourceType": "search"
   },
   "monitor": {
-    "lastAttemptAt": "2026-09-06T18:57:00+03:00",
+    "lastAttemptAt": "2026-09-07T07:00:37+03:00",
     "lastAttemptStatus": "partial",
-    "lastAttemptNote": "Публичная выдача доступна. Для 20–9 января сохранён единственный увиденный вариант с подтверждённым багажом; для 19–8 января багаж в выдаче отсутствовал, поэтому цены не сохранялись. Остальные даты, HKT и open-jaw в этом запуске не охвачены.",
+    "lastAttemptNote": "Публичная выдача доступна. Проверена новая комбинация Казань–Бангкок; сохранён диапазон от самого быстрого до более долгого дешёвого варианта, оба плеча до 70 часов. Остальные аэропорты, даты, HKT и open-jaw в этом запуске не охвачены. Длительность пересадок источник не раскрыл.",
     "lastAttemptError": null,
-    "lastSuccessfulCheckAt": "2026-09-06T18:57:00+03:00",
-    "nextScheduledAt": "2026-09-07T00:57:00+03:00"
+    "lastSuccessfulCheckAt": "2026-09-07T07:00:37+03:00",
+    "nextScheduledAt": "2026-09-07T13:00:37+03:00"
   },
   "alerts": []
 }

@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-06T15:57:00.000Z",
+    "updatedAt": "2026-09-07T04:00:37.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -82,6 +82,15 @@ window.FLIGHT_TRACKER_DATA = {
         "NBC→BKK / BKK→NBC; 19.12.2026–08.01.2027"
       ],
       "note": "Продолжение частичного ежедневного поиска. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа не подтверждены."
+    },
+    {
+      "id": "discovery-20260907-070037-partial",
+      "timestamp": "2026-09-07T07:00:37+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→BKK / BKK→KZN; 18.12.2026–07.01.2027"
+      ],
+      "note": "Частичный ежедневный расширенный поиск. Сохранены быстрый и более долгий дешёвый варианты до 70 часов. Номера рейсов в выдаче не раскрыты, поэтому устойчивые flightId и события baseline/added не создавались. Отмены и распродажа рейсов не подтверждены."
     }
   ],
   "monitorRuns": [
@@ -146,6 +155,16 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-07T00:57:00+03:00",
       "note": "Публичная выдача доступна. Для 20–9 января сохранён единственный увиденный вариант с подтверждённым багажом; для 19–8 января багаж в выдаче отсутствовал, поэтому цены не сохранялись. Остальные даты, HKT и open-jaw в этом запуске не охвачены."
+    },
+    {
+      "id": "monitor-20260907-070037-partial",
+      "timestamp": "2026-09-07T07:00:37+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→BKK / BKK→KZN; вылет 18.12.2026; обратный вылет 07.01.2027; оптимальный, самый дешёвый с багажом и самый быстрый варианты"
+      ],
+      "nextScheduledAt": "2026-09-07T13:00:37+03:00",
+      "note": "Публичная выдача доступна. Проверена новая комбинация Казань–Бангкок; сохранён диапазон от самого быстрого до более долгого дешёвого варианта, оба плеча до 70 часов. Остальные аэропорты, даты, HKT и open-jaw в этом запуске не охвачены. Длительность пересадок источник не раскрыл."
     }
   ],
   "checks": [
@@ -1762,6 +1781,159 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Самый быстрый вариант выдачи с багажом. Прилёт в Бегишево 9 января в 20:10; дорога от аэропорта до дома не подтверждена. Длительность пересадок источник не показал."
+    },
+    {
+      "id": "20260907-070037-kzn-bkk-18-07-airarabia-optimal",
+      "timestamp": "2026-09-07T07:00:37+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-08",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 15.5,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T23:55:00+03:00",
+        "arrivalAt": "2026-12-19T17:05:00+07:00",
+        "durationHours": 13.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T11:25:00+07:00",
+        "arrivalAt": "2027-01-07T22:55:00+03:00",
+        "durationHours": 15.5,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 233671,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Оптимальный вариант выдачи с одной пересадкой. Прилёт в Казань 7 января в 22:55; возвращение домой в Набережные Челны 8 января предполагается, но дорога не подтверждена. Длительность пересадок, обязательные сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-070037-kzn-bkk-18-07-airarabia-cheapest-bag",
+      "timestamp": "2026-09-07T07:00:37+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-08",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 25.5833,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T23:55:00+03:00",
+        "arrivalAt": "2026-12-20T05:30:00+07:00",
+        "durationHours": 25.5833,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T11:25:00+07:00",
+        "arrivalAt": "2027-01-07T22:55:00+03:00",
+        "durationHours": 15.5,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "20 кг — 2 места по данным выдачи",
+      "totalPrice": 205043,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый увиденный вариант с подтверждённым багажом; более долгий перелёт туда, но оба плеча короче 70 часов. Прилёт в Казань 7 января в 22:55; возвращение домой в Набережные Челны 8 января предполагается, но дорога не подтверждена. Длительность пересадок, обязательные сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-070037-kzn-bkk-18-07-aeroflot-fastest",
+      "timestamp": "2026-09-07T07:00:37+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-08",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 1,
+      "travelTimeHours": 13.5,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T15:35:00+03:00",
+        "arrivalAt": "2026-12-19T08:20:00+07:00",
+        "durationHours": 12.75,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SVO",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T10:15:00+07:00",
+        "arrivalAt": "2027-01-07T19:45:00+03:00",
+        "durationHours": 13.5,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SVO",
+            "durationHours": null
+          }
+        ]
+      },
+      "baggage": "23 кг — 2 места по данным выдачи",
+      "totalPrice": 453635,
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый быстрый вариант выдачи с одной пересадкой. Источник показывал остаток 5 билетов по этой цене, но это не подтверждает распродажу рейса. Прилёт в Казань 7 января в 19:45; возвращение домой в Набережные Челны 8 января предполагается, но дорога не подтверждена. Длительность пересадок, обязательные сборы и оплата российской картой источником не подтверждены."
     }
   ]
 };
