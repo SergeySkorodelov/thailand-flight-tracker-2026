@@ -170,7 +170,7 @@ function bindEvents() {
     renderJournal(getVisibleRecords());
   });
 
-  els.reloadData.addEventListener("click", () => location.reload());
+  els.reloadData.addEventListener("click", () => loadData({ announce: true }));
   els.jsonFile.addEventListener("change", loadSelectedFile);
   els.exportCsv.addEventListener("click", exportCsv);
   bindChartInteraction(els.trendChart, els.trendTooltip, "trend");
@@ -221,7 +221,7 @@ function renderAirportFilters() {
   `).join("");
 }
 
-async function loadData() {
+async function loadData({ announce = false } = {}) {
   els.reloadData.disabled = true;
   els.reloadData.setAttribute("aria-busy", "true");
   try {
@@ -231,8 +231,18 @@ async function loadData() {
       showToast("Загружен демонстрационный набор");
       return;
     }
-    const data = window.FLIGHT_TRACKER_DATA || await fetchDataFallback();
+    let data;
+    try {
+      // The script tag is an offline fallback. Always request a cache-busted copy
+      // first so a newly published six-hour snapshot appears without waiting for
+      // the browser or installed PWA cache to expire.
+      data = await fetchDataFallback();
+    } catch (fetchError) {
+      if (!window.FLIGHT_TRACKER_DATA) throw fetchError;
+      data = window.FLIGHT_TRACKER_DATA;
+    }
     applyData(data, "flight-checks.js");
+    if (announce) showToast("Данные обновлены");
   } catch (error) {
     applyData({ config: DEFAULT_CONFIG, checks: [] }, "встроенная пустая схема");
     showToast("Не удалось прочитать файл данных — показан пустой трекер");
