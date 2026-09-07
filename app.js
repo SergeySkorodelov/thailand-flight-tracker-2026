@@ -231,8 +231,8 @@ async function loadData() {
       showToast("Загружен демонстрационный набор");
       return;
     }
-    if (!window.FLIGHT_TRACKER_DATA) throw new Error("Data file is unavailable");
-    applyData(window.FLIGHT_TRACKER_DATA, "flight-checks.js");
+    const data = window.FLIGHT_TRACKER_DATA || await fetchDataFallback();
+    applyData(data, "flight-checks.js");
   } catch (error) {
     applyData({ config: DEFAULT_CONFIG, checks: [] }, "встроенная пустая схема");
     showToast("Не удалось прочитать файл данных — показан пустой трекер");
@@ -240,6 +240,16 @@ async function loadData() {
     els.reloadData.disabled = false;
     els.reloadData.removeAttribute("aria-busy");
   }
+}
+
+async function fetchDataFallback() {
+  const response = await fetch(`./data/flight-checks.js?reload=${Date.now()}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Data request failed: ${response.status}`);
+  const text = await response.text();
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end <= start) throw new Error("Data payload is malformed");
+  return JSON.parse(text.slice(start, end + 1));
 }
 
 async function loadSelectedFile(event) {
