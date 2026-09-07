@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-07T10:01:51.903Z",
-  "sourceUpdatedAt": "2026-09-07T09:55:45.000Z",
-  "latestCheckAt": "2026-09-07T12:55:45+03:00",
+  "generatedAt": "2026-09-07T19:12:17.614Z",
+  "sourceUpdatedAt": "2026-09-07T19:08:56.000Z",
+  "latestCheckAt": "2026-09-07T22:08:56+03:00",
   "scope": {
     "departureDates": [
       "2026-12-18",
@@ -33,157 +33,66 @@
     "intervalHours": 6
   },
   "signal": {
-    "status": "watch",
-    "label": "ПРИСМОТРЕТЬСЯ",
+    "status": "expensive",
+    "label": "ДОРОГО",
     "urgent": false,
-    "notify": true,
-    "observedAt": "2026-09-07T12:55:45+03:00",
-    "expiresAt": "2026-09-07T15:55:45.000Z",
+    "notify": false,
+    "observedAt": "2026-09-07T22:08:56+03:00",
+    "expiresAt": "2026-09-08T01:08:56.000Z",
     "missingChecks": [
       "возвращение домой",
       "обязательные сборы",
-      "оплата российской картой",
-      "дорога из/до Москвы",
-      "длительность и пересадки"
+      "оплата российской картой"
     ],
-    "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой, дорога из/до Москвы, длительность и пересадки",
-    "route": "MOW→BKK / BKK→MOW",
+    "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой",
+    "route": "KZN→BKK / BKK→KZN",
     "departureDate": "2026-12-18",
-    "returnDate": "2027-01-08",
-    "homeArrivalDate": "2027-01-10",
+    "returnDate": "2027-01-07",
+    "homeArrivalDate": "2027-01-08",
     "homeArrivalAt": null,
     "outbound": {
-      "route": "DME→BKK",
-      "departureAt": "2026-12-18T17:45:00+03:00",
-      "arrivalAt": "2026-12-20T17:00:00+07:00",
-      "durationHours": 43.25,
-      "stops": 3,
+      "route": "KZN→BKK",
+      "departureAt": "2026-12-18T23:55:00+03:00",
+      "arrivalAt": "2026-12-19T17:05:00+07:00",
+      "durationHours": 13.1667,
+      "stops": 1,
       "layovers": [
         {
-          "airport": "SVX",
-          "durationHours": null
-        },
-        {
-          "airport": "PKX–PEK",
-          "durationHours": null
-        },
-        {
-          "airport": "YCU",
+          "airport": "SHJ",
           "durationHours": null
         }
       ]
     },
     "inbound": {
-      "route": "BKK→DME",
-      "departureAt": "2027-01-08T06:50:00+07:00",
-      "arrivalAt": "2027-01-09T08:00:00+03:00",
-      "durationHours": 29.1667,
-      "stops": 3,
+      "route": "BKK→KZN",
+      "departureAt": "2027-01-07T11:25:00+07:00",
+      "arrivalAt": "2027-01-07T22:55:00+03:00",
+      "durationHours": 15.5,
+      "stops": 1,
       "layovers": [
         {
-          "airport": "HKT",
-          "durationHours": null
-        },
-        {
-          "airport": "KUL",
-          "durationHours": null
-        },
-        {
-          "airport": "DXB",
+          "airport": "SHJ",
           "durationHours": null
         }
       ]
     },
-    "airline": "Уральские авиалинии + Air China + Shenzhen Airlines / Thai Vietjet Air + Malaysia Airlines + Emirates",
-    "stops": 3,
-    "travelTimeHours": 43.25,
-    "baggage": "23 кг на человека — 2 места",
-    "totalPrice": 188576,
-    "pricePerPerson": 94288,
+    "airline": "Air Arabia",
+    "stops": 1,
+    "travelTimeHours": 15.5,
+    "baggage": "20 кг на человека — 2 места",
+    "totalPrice": 207343,
+    "pricePerPerson": 103672,
     "payment": "Цена в ₽; российскую карту уточнить у продавца",
-    "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+    "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
     "sourceType": "search"
   },
   "monitor": {
-    "lastAttemptAt": "2026-09-07T12:55:45+03:00",
+    "lastAttemptAt": "2026-09-07T22:08:56+03:00",
     "lastAttemptStatus": "partial",
-    "lastAttemptNote": "Публичная выдача доступна. Проверены Казань–Бангкок и Москва–Бангкок, включая длинные варианты до 70 часов, тарифы с/без багажа и прямой рейс из Москвы. NBC, HKT, open-jaw и остальные сочетания дат в этом запуске не охвачены. Длительность пересадок источник не раскрыл.",
+    "lastAttemptNote": "Внеплановая проверка по запросу пользователя. Публичная выдача доступна; обновлены подробные цены с/без багажа, время и пересадки по Казани и Москве. NBC, HKT, open-jaw и остальные сочетания дат в этом запуске не охвачены. Длительность пересадок источник не раскрыл.",
     "lastAttemptError": null,
-    "lastSuccessfulCheckAt": "2026-09-07T12:55:45+03:00",
-    "nextScheduledAt": "2026-09-07T18:55:45+03:00"
+    "lastSuccessfulCheckAt": "2026-09-07T22:08:56+03:00",
+    "nextScheduledAt": "2026-09-08T00:55:45+03:00"
   },
-  "alerts": [
-    {
-      "status": "watch",
-      "label": "ПРИСМОТРЕТЬСЯ",
-      "urgent": false,
-      "notify": true,
-      "observedAt": "2026-09-07T12:55:45+03:00",
-      "expiresAt": "2026-09-07T15:55:45.000Z",
-      "missingChecks": [
-        "возвращение домой",
-        "обязательные сборы",
-        "оплата российской картой",
-        "дорога из/до Москвы",
-        "длительность и пересадки"
-      ],
-      "reason": "Перед покупкой уточнить: возвращение домой, обязательные сборы, оплата российской картой, дорога из/до Москвы, длительность и пересадки",
-      "route": "MOW→BKK / BKK→MOW",
-      "departureDate": "2026-12-18",
-      "returnDate": "2027-01-08",
-      "homeArrivalDate": "2027-01-10",
-      "homeArrivalAt": null,
-      "outbound": {
-        "route": "DME→BKK",
-        "departureAt": "2026-12-18T17:45:00+03:00",
-        "arrivalAt": "2026-12-20T17:00:00+07:00",
-        "durationHours": 43.25,
-        "stops": 3,
-        "layovers": [
-          {
-            "airport": "SVX",
-            "durationHours": null
-          },
-          {
-            "airport": "PKX–PEK",
-            "durationHours": null
-          },
-          {
-            "airport": "YCU",
-            "durationHours": null
-          }
-        ]
-      },
-      "inbound": {
-        "route": "BKK→DME",
-        "departureAt": "2027-01-08T06:50:00+07:00",
-        "arrivalAt": "2027-01-09T08:00:00+03:00",
-        "durationHours": 29.1667,
-        "stops": 3,
-        "layovers": [
-          {
-            "airport": "HKT",
-            "durationHours": null
-          },
-          {
-            "airport": "KUL",
-            "durationHours": null
-          },
-          {
-            "airport": "DXB",
-            "durationHours": null
-          }
-        ]
-      },
-      "airline": "Уральские авиалинии + Air China + Shenzhen Airlines / Thai Vietjet Air + Malaysia Airlines + Emirates",
-      "stops": 3,
-      "travelTimeHours": 43.25,
-      "baggage": "23 кг на человека — 2 места",
-      "totalPrice": 188576,
-      "pricePerPerson": 94288,
-      "payment": "Цена в ₽; российскую карту уточнить у продавца",
-      "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
-      "sourceType": "search"
-    }
-  ]
+  "alerts": []
 }

@@ -1,7 +1,7 @@
 window.FLIGHT_TRACKER_DATA = {
   "metadata": {
     "schemaVersion": 2,
-    "updatedAt": "2026-09-07T09:55:45.000Z",
+    "updatedAt": "2026-09-07T19:08:56.000Z",
     "timezone": "Europe/Moscow",
     "description": "Журнал проверок авиабилетов в Таиланд. Производные поля рассчитываются в браузере."
   },
@@ -176,6 +176,17 @@ window.FLIGHT_TRACKER_DATA = {
       ],
       "nextScheduledAt": "2026-09-07T18:55:45+03:00",
       "note": "Публичная выдача доступна. Проверены Казань–Бангкок и Москва–Бангкок, включая длинные варианты до 70 часов, тарифы с/без багажа и прямой рейс из Москвы. NBC, HKT, open-jaw и остальные сочетания дат в этом запуске не охвачены. Длительность пересадок источник не раскрыл."
+    },
+    {
+      "id": "monitor-20260907-220856-partial",
+      "timestamp": "2026-09-07T22:08:56+03:00",
+      "status": "partial",
+      "coverage": [
+        "KZN→BKK / BKK→KZN; вылет 18.12.2026; обратный вылет 07.01.2027; вариант Air Arabia с одной пересадкой и самый дешёвый базовый вариант",
+        "MOW→BKK / BKK→MOW; вылет 18.12.2026; обратный вылет 08.01.2027; вариант Air Arabia с одной пересадкой и прямой Аэрофлот"
+      ],
+      "nextScheduledAt": "2026-09-08T00:55:45+03:00",
+      "note": "Внеплановая проверка по запросу пользователя. Публичная выдача доступна; обновлены подробные цены с/без багажа, время и пересадки по Казани и Москве. NBC, HKT, open-jaw и остальные сочетания дат в этом запуске не охвачены. Длительность пересадок источник не раскрыл."
     }
   ],
   "checks": [
@@ -2328,6 +2339,296 @@ window.FLIGHT_TRACKER_DATA = {
       "paymentVerified": false,
       "groundTransferVerified": false,
       "note": "Прямой рейс Аэрофлота в обе стороны. Прилёт в Москву 8 января в 18:45; дорога до Набережных Челнов 9 января не подтверждена. Сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-220856-kzn-bkk-18-07-airarabia-convenient",
+      "timestamp": "2026-09-07T22:08:56+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-08",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 15.5,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T23:55:00+03:00",
+        "arrivalAt": "2026-12-19T17:05:00+07:00",
+        "durationHours": 13.1667,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T11:25:00+07:00",
+        "arrivalAt": "2027-01-07T22:55:00+03:00",
+        "durationHours": 15.5,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "basePrice": 194303,
+      "basePriceNote": "Базовый тариф",
+      "baggage": "20 кг на человека — 2 места",
+      "totalPrice": 207343,
+      "fareOptions": [
+        {
+          "id": "base-carryon-7kg",
+          "kind": "without_baggage",
+          "label": "Без зарегистрированного багажа",
+          "price": 194303,
+          "checkedBaggage": "Нет",
+          "carryOn": "7 кг на человека — 2 места",
+          "note": "Базовый тариф"
+        },
+        {
+          "id": "checked-20kg-carryon-7kg",
+          "kind": "with_baggage",
+          "label": "С багажом 20 кг",
+          "price": 207343,
+          "checkedBaggage": "20 кг на человека — 2 места",
+          "carryOn": "7 кг на человека — 2 места",
+          "note": "Тариф с зарегистрированным багажом"
+        }
+      ],
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый подробно показанный вариант с удобной пересадкой. Прилёт в Казань 7 января в 22:55; возвращение домой в Набережные Челны 8 января предполагается, но дорога не подтверждена. Длительность пересадок, сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-220856-kzn-bkk-18-07-mixed-cheapest",
+      "timestamp": "2026-09-07T22:08:56+03:00",
+      "origin": "KZN",
+      "route": "KZN→BKK / BKK→KZN",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-07",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "S7 Airlines + Spring Airlines / Air Arabia + Nordwind Airlines",
+      "stops": 2,
+      "travelTimeHours": 41,
+      "outbound": {
+        "route": "KZN→BKK",
+        "departureAt": "2026-12-18T21:30:00+03:00",
+        "arrivalAt": "2026-12-20T13:05:00+07:00",
+        "durationHours": 35.5833,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "OVB",
+            "durationHours": null
+          },
+          {
+            "airport": "XIY",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→KZN",
+        "departureAt": "2027-01-07T08:20:00+07:00",
+        "arrivalAt": "2027-01-08T21:20:00+03:00",
+        "durationHours": 41,
+        "stops": 2,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          },
+          {
+            "airport": "UFA",
+            "durationHours": null
+          }
+        ]
+      },
+      "basePrice": 188630,
+      "basePriceNote": "Базовый тариф с небольшой сумкой",
+      "baggage": "10 кг на человека — 2 места",
+      "totalPrice": 227711,
+      "fareOptions": [
+        {
+          "id": "base-small-bag",
+          "kind": "without_baggage",
+          "label": "Без зарегистрированного багажа",
+          "price": 188630,
+          "checkedBaggage": "Нет",
+          "carryOn": "Небольшая сумка; вес не указан",
+          "note": "Базовый тариф"
+        },
+        {
+          "id": "checked-10kg-small-bag",
+          "kind": "with_baggage",
+          "label": "С багажом 10 кг",
+          "price": 227711,
+          "checkedBaggage": "10 кг на человека — 2 места",
+          "carryOn": "Небольшая сумка; вес не указан",
+          "note": "Тариф с зарегистрированным багажом"
+        }
+      ],
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/KZN1812BKK07012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Самый дешёвый базовый тариф выдачи; с зарегистрированным багажом дороже варианта Air Arabia. Оба плеча короче 70 часов, по две пересадки. Прилёт в Казань 8 января в 21:20; возвращение домой 9 января предполагается, но дорога не подтверждена."
+    },
+    {
+      "id": "20260907-220856-mow-bkk-18-08-airarabia",
+      "timestamp": "2026-09-07T22:08:56+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-10",
+      "homeArrivalAt": null,
+      "airline": "Air Arabia",
+      "stops": 1,
+      "travelTimeHours": 22.8333,
+      "outbound": {
+        "route": "DME→BKK",
+        "departureAt": "2026-12-18T03:15:00+03:00",
+        "arrivalAt": "2026-12-19T05:30:00+07:00",
+        "durationHours": 22.25,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "inbound": {
+        "route": "BKK→DME",
+        "departureAt": "2027-01-08T18:05:00+07:00",
+        "arrivalAt": "2027-01-09T12:55:00+03:00",
+        "durationHours": 22.8333,
+        "stops": 1,
+        "layovers": [
+          {
+            "airport": "SHJ",
+            "durationHours": null
+          }
+        ]
+      },
+      "basePrice": 210344,
+      "basePriceNote": "Базовый тариф",
+      "baggage": "20 кг на человека — 2 места",
+      "totalPrice": 224228,
+      "fareOptions": [
+        {
+          "id": "base-carryon-7kg",
+          "kind": "without_baggage",
+          "label": "Без зарегистрированного багажа",
+          "price": 210344,
+          "checkedBaggage": "Нет",
+          "carryOn": "7 кг на человека — 2 места",
+          "note": "Базовый тариф"
+        },
+        {
+          "id": "checked-20kg-carryon-7kg",
+          "kind": "with_baggage",
+          "label": "С багажом 20 кг",
+          "price": 224228,
+          "checkedBaggage": "20 кг на человека — 2 места",
+          "carryOn": "7 кг на человека — 2 места",
+          "note": "Тариф с зарегистрированным багажом"
+        }
+      ],
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Подробно показанный вариант с одной пересадкой на каждом плече. Прилёт в Москву 9 января в 12:55; возвращение домой 10 января предполагается, но дорога и её стоимость не подтверждены. Длительность пересадок, сборы и оплата российской картой источником не подтверждены."
+    },
+    {
+      "id": "20260907-220856-mow-bkk-18-08-aeroflot-direct",
+      "timestamp": "2026-09-07T22:08:56+03:00",
+      "origin": "MOW",
+      "route": "MOW→BKK / BKK→MOW · прямой",
+      "departureDate": "2026-12-18",
+      "returnDate": "2027-01-08",
+      "homeArrivalDate": "2027-01-09",
+      "homeArrivalAt": null,
+      "airline": "Аэрофлот",
+      "stops": 0,
+      "travelTimeHours": 10.1667,
+      "outbound": {
+        "route": "SVO→BKK",
+        "departureAt": "2026-12-18T19:15:00+03:00",
+        "arrivalAt": "2026-12-19T08:20:00+07:00",
+        "durationHours": 9.0833,
+        "stops": 0,
+        "layovers": []
+      },
+      "inbound": {
+        "route": "BKK→SVO",
+        "departureAt": "2027-01-08T12:35:00+07:00",
+        "arrivalAt": "2027-01-08T18:45:00+03:00",
+        "durationHours": 10.1667,
+        "stops": 0,
+        "layovers": []
+      },
+      "basePrice": 376508,
+      "basePriceNote": "Базовый тариф",
+      "baggage": "23 кг на человека — 2 места",
+      "totalPrice": 430092,
+      "fareOptions": [
+        {
+          "id": "base-carryon-10kg",
+          "kind": "without_baggage",
+          "label": "Без зарегистрированного багажа",
+          "price": 376508,
+          "checkedBaggage": "Нет",
+          "carryOn": "10 кг на человека — 2 места",
+          "note": "Базовый тариф"
+        },
+        {
+          "id": "checked-23kg-carryon-10kg",
+          "kind": "with_baggage",
+          "label": "С багажом 23 кг",
+          "price": 430092,
+          "checkedBaggage": "23 кг на человека — 2 места",
+          "carryOn": "10 кг на человека — 2 места",
+          "note": "Тариф с зарегистрированным багажом"
+        }
+      ],
+      "payment": "Цена в ₽; российскую карту уточнить у продавца",
+      "source": "https://www.aviasales.ru/search/MOW1812BKK08012",
+      "sourceType": "search",
+      "availability": "available",
+      "homeArrivalVerified": false,
+      "baggageVerified": true,
+      "feesVerified": false,
+      "paymentVerified": false,
+      "groundTransferVerified": false,
+      "note": "Прямой рейс Аэрофлота в обе стороны. Прилёт в Москву 8 января в 18:45; возвращение домой 9 января предполагается, но дорога и её стоимость не подтверждены. Сборы и оплата российской картой источником не подтверждены."
     }
   ]
 };
